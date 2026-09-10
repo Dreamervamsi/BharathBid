@@ -73,18 +73,17 @@ async def send_email_report(payload: Dict[str, Any] = Body(...)):
 @app.post("/analyze-file")
 async def analyze_file(file: UploadFile = File(...), case_id: str = Form("GEM/2024/9/19102")):
     content = await file.read()
-    text = ""
+    pages_text = []
     try:
         import pypdf
         import io
         reader = pypdf.PdfReader(io.BytesIO(content))
         pages_text = [page.extract_text() or "" for page in reader.pages]
-        text = "\n".join(pages_text)
     except Exception as e:
         print("PyPDF extraction note:", e)
 
-    analysis_res = ComplianceEngine.analyze_document_text(
-        text=text,
+    analysis_res = ComplianceEngine.analyze_pages(
+        pages_text=pages_text,
         filename=file.filename or "uploaded_bid.pdf"
     )
 

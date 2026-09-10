@@ -27,11 +27,14 @@ export default function EvidenceViewer({ clause }) {
 
   return (
     <div className="bg-white rounded-lg border border-slate-200 shadow-2xs flex flex-col h-full overflow-hidden font-sans">
-      {/* Top Controls Bar matching reference image ref.png */}
+      {/* Top Controls Bar */}
       <div className="px-3.5 py-2 border-b border-slate-200 bg-white flex items-center justify-between shrink-0 text-xs">
         <div className="flex items-center space-x-2 truncate pr-2">
           <span className="font-semibold text-slate-900 truncate text-[11px] uppercase tracking-wide">
             DOCUMENT READER AND EVIDENCE
+          </span>
+          <span className="text-[10px] text-blue-600 font-mono bg-blue-50 px-2 py-0.5 rounded border border-blue-200 truncate">
+            {clause.documentFileName || fileName}
           </span>
         </div>
 
@@ -65,7 +68,7 @@ export default function EvidenceViewer({ clause }) {
         </div>
       </div>
 
-      {/* Main Document Viewer Canvas matching reference ref.png */}
+      {/* Main Document Viewer Canvas */}
       <div className="flex-1 bg-[#2C323B]/10 p-3 overflow-auto flex items-start justify-center relative">
         {pdfObjectUrl ? (
           <div className="w-full h-full min-h-[500px] flex flex-col items-center">
@@ -79,7 +82,7 @@ export default function EvidenceViewer({ clause }) {
           <div className="flex gap-3 max-w-full">
             {/* Page Thumbnails sidebar preview */}
             <div className="hidden lg:flex flex-col space-y-2 shrink-0">
-              {[12, 14, 15, 16, 17].map((pNum) => (
+              {[1, 2, clause.pageNumber || 14, 15, 16].map((pNum) => (
                 <div
                   key={pNum}
                   onClick={() => setActivePage(pNum)}
@@ -111,77 +114,52 @@ export default function EvidenceViewer({ clause }) {
                   {clause.bidderName || "ABC Infra Private Limited"}
                 </h3>
                 <p className="text-[11px] text-slate-600 font-medium mt-0.5">
-                  Statement of Profit and Loss for the year ended 31 March 2023
+                  {clause.documentName || "Financial & Compliance Evidence Document"}
                 </p>
-                <div className="text-[9px] text-slate-400 text-right mt-1 italic">(Amount in INR)</div>
+                <div className="text-[9px] text-slate-400 text-right mt-1 italic">Extracted from Page {activePage}</div>
               </div>
 
-              {/* Document Financial Table Content matching ref.png */}
-              <div className="text-xs space-y-2">
-                <div className="grid grid-cols-12 font-semibold text-slate-600 border-b border-slate-300 pb-1.5 uppercase text-[10px]">
-                  <div className="col-span-8">Particulars</div>
-                  <div className="col-span-4 text-right">FY 2022-23</div>
-                </div>
-
-                {/* Highlighted Bounding Box Row */}
-                <div className="relative">
-                  <div className="grid grid-cols-12 py-1.5 px-2 rounded border bg-rose-50 border-rose-300 text-slate-900 font-semibold">
-                    <div className="col-span-8">I. Revenue from Operations</div>
-                    <div className="col-span-4 text-right font-bold text-slate-900">
-                      ₹ 35,30,000
+              {/* Dynamic Extracted Evidence Highlight Box */}
+              <div className="text-xs space-y-3">
+                <div className="p-3 bg-blue-50/80 border border-blue-200 rounded-lg space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-blue-900 uppercase tracking-wider">
+                      Clause {clause.clauseNumber}: {clause.title}
+                    </span>
+                    <span className="text-[10px] font-mono text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200">
+                      Page {clause.pageNumber || activePage}
+                    </span>
+                  </div>
+                  <div className="text-xs font-bold text-slate-900">
+                    Requirement: <span className="text-slate-700">{clause.requirement}</span>
+                  </div>
+                  <div className="text-xs font-bold text-slate-900">
+                    Found Value: <span className={isIssue ? "text-rose-600 font-black" : "text-emerald-700 font-black"}>{clause.foundValue}</span>
+                  </div>
+                  {clause.variance && (
+                    <div className="text-[11px] font-semibold text-slate-600">
+                      Variance: <span className="text-slate-800">{clause.variance}</span>
                     </div>
-                  </div>
-
-                  {/* AI Extracted Floating Tag matching ref.png */}
-                  <div className="absolute top-1 right-20 bg-rose-50 border border-rose-300 shadow-md rounded-md p-2 text-[10px] text-slate-800 z-10 w-44">
-                    <div className="font-semibold text-rose-700 mb-0.5 text-[9px]">AI Extracted</div>
-                    <div className="text-slate-600">Revenue from Operations</div>
-                    <div className="font-bold text-slate-900">₹ 35,30,000</div>
-                    <div className="text-[8px] text-slate-400 mt-0.5">Page 14 • 92% confidence</div>
-                  </div>
+                  )}
                 </div>
 
-                <div className="grid grid-cols-12 py-1.5 px-2 text-slate-700">
-                  <div className="col-span-8">II. Other Income</div>
-                  <div className="col-span-4 text-right font-medium">₹ 20,00,000</div>
-                </div>
-
-                <div className="grid grid-cols-12 py-1.5 px-2 font-semibold text-slate-900 border-t border-slate-200">
-                  <div className="col-span-8">III. Total Revenue</div>
-                  <div className="col-span-4 text-right font-bold">₹ 55,30,000</div>
-                </div>
-
-                <div className="grid grid-cols-12 py-1.5 px-2 text-slate-700 font-medium pt-2">
-                  <div className="col-span-8">IV. Expenses</div>
-                </div>
-
-                <div className="pl-3 space-y-1 text-[11px] text-slate-600">
-                  <div className="grid grid-cols-12 py-0.5">
-                    <div className="col-span-8">(i) Cost of Materials Consumed</div>
-                    <div className="col-span-4 text-right">₹ 14,50,000</div>
+                <div className="relative p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    Raw Extracted Source Snippet
                   </div>
-                  <div className="grid grid-cols-12 py-0.5">
-                    <div className="col-span-8">(ii) Employee Benefit Expenses</div>
-                    <div className="col-span-4 text-right">₹ 8,50,000</div>
-                  </div>
-                  <div className="grid grid-cols-12 py-0.5">
-                    <div className="col-span-8">(iii) Finance Costs</div>
-                    <div className="col-span-4 text-right">₹ 12,00,000</div>
-                  </div>
-                  <div className="grid grid-cols-12 py-0.5">
-                    <div className="col-span-8">(iv) Other Expenses</div>
-                    <div className="col-span-4 text-right">₹ 3,80,000</div>
+                  <p className="text-xs font-mono text-slate-800 bg-white p-2 rounded border border-slate-200 leading-relaxed">
+                    "{clause.extractedText || "Source snippet extracted during PyPDF / OCR analysis."}"
+                  </p>
+
+                  <div className="flex items-center justify-between pt-1 text-[10px] text-slate-500 font-medium">
+                    <span>Confidence Score: <strong className="text-slate-900">{clause.confidenceScore || 92}%</strong></span>
+                    <span>Risk Severity: <strong className={isIssue ? "text-rose-600 font-bold" : "text-emerald-600 font-bold"}>{clause.riskLevel || "LOW"}</strong></span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-12 py-1.5 px-2 font-semibold text-slate-900 border-t border-b border-slate-300">
-                  <div className="col-span-8">V. Total Expenses</div>
-                  <div className="col-span-4 text-right">₹ 28,00,000</div>
-                </div>
-
-                <div className="grid grid-cols-12 py-1.5 px-2 font-bold text-slate-900">
-                  <div className="col-span-8">VI. Profit Before Tax</div>
-                  <div className="col-span-4 text-right">₹ 73,00,000</div>
+                <div className="p-3 bg-amber-50/60 border border-amber-200 rounded-lg text-xs space-y-1">
+                  <div className="font-bold text-amber-900 uppercase text-[10px]">Evaluation Note</div>
+                  <p className="text-slate-700">{clause.whyItMatters}</p>
                 </div>
               </div>
             </div>
@@ -189,45 +167,44 @@ export default function EvidenceViewer({ clause }) {
         )}
       </div>
 
-      {/* Bottom AI Extraction Progress Bar matching ref.png */}
+      {/* Bottom Pipeline Progress Bar */}
       <div className="p-3 bg-white border-t border-slate-200 space-y-2 shrink-0 text-xs">
         <div className="flex items-center space-x-2 text-blue-900 font-semibold text-[11px]">
           <div className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></div>
-          <span>AI Extraction Progress</span>
-          <span className="text-[10px] text-slate-400 font-normal">Extracting information from document...</span>
+          <span>AI Extraction Status</span>
+          <span className="text-[10px] text-slate-400 font-normal">Active document evaluation complete</span>
         </div>
 
-        {/* 6 Stage Timeline Dots matching ref.png */}
         <div className="grid grid-cols-6 gap-2 text-center text-[9px]">
           <div className="space-y-1">
             <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
             <div className="text-slate-700 font-medium leading-tight">Document Collected</div>
-            <div className="text-slate-400">2s</div>
+            <div className="text-slate-400">1s</div>
           </div>
           <div className="space-y-1">
             <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
             <div className="text-slate-700 font-medium leading-tight">Text Extraction</div>
+            <div className="text-slate-400">2s</div>
+          </div>
+          <div className="space-y-1">
+            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
+            <div className="text-slate-700 font-medium leading-tight">Information Extraction</div>
+            <div className="text-slate-400">3s</div>
+          </div>
+          <div className="space-y-1">
+            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
+            <div className="text-slate-700 font-medium leading-tight">Compliance Checks</div>
+            <div className="text-slate-400">4s</div>
+          </div>
+          <div className="space-y-1">
+            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
+            <div className="text-slate-700 font-medium leading-tight">Evidence Validation</div>
             <div className="text-slate-400">5s</div>
           </div>
           <div className="space-y-1">
-            <div className="w-4 h-4 rounded-full bg-blue-600 text-white mx-auto flex items-center justify-center font-bold">?</div>
-            <div className="text-blue-900 font-semibold leading-tight">Information Extraction</div>
-            <div className="text-slate-400">8s</div>
-          </div>
-          <div className="space-y-1 opacity-50">
-            <div className="w-4 h-4 rounded-full bg-slate-200 text-slate-500 mx-auto flex items-center justify-center">4</div>
-            <div className="text-slate-600 leading-tight">Compliance Checks</div>
-            <div className="text-slate-400">12s</div>
-          </div>
-          <div className="space-y-1 opacity-50">
-            <div className="w-4 h-4 rounded-full bg-slate-200 text-slate-500 mx-auto flex items-center justify-center">5</div>
-            <div className="text-slate-600 leading-tight">Evidence Validation</div>
-            <div className="text-slate-400">16s</div>
-          </div>
-          <div className="space-y-1 opacity-50">
-            <div className="w-4 h-4 rounded-full bg-slate-200 text-slate-500 mx-auto flex items-center justify-center">6</div>
-            <div className="text-slate-600 leading-tight">Final Analysis</div>
-            <div className="text-slate-400">20s</div>
+            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
+            <div className="text-slate-700 font-medium leading-tight">Final Analysis</div>
+            <div className="text-slate-400">6s</div>
           </div>
         </div>
       </div>

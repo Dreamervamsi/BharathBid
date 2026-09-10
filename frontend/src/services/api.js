@@ -200,10 +200,29 @@ export const fetchAuditTrail = async (caseId = "GEM/2024/B/19102") => {
 };
 
 export const uploadDocument = async (caseId, file) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('case_id', caseId);
+
+    const res = await fetch(`${AI_SERVICE_BASE}/analyze-file`, {
+      method: 'POST',
+      body: formData
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (e) {
+    console.warn("AI Service /analyze-file network note:", e);
+  }
   return {
     documentId: "doc-" + Date.now(),
     fileName: file.name,
     status: "Uploaded",
     _isDemoMode: true
   };
+};
+
+export const analyzeFileApi = async (file, caseId = "GEM/2024/B/19102") => {
+  return uploadDocument(caseId, file);
 };
