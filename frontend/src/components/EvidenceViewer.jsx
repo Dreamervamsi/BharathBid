@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { ZoomIn, ZoomOut, Maximize2, FileText, CheckCircle, Sparkles, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ZoomIn, ZoomOut, Maximize2, FileText, UploadCloud, ArrowRight, Info } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useVerification } from '../context/VerificationContext';
 
-export default function EvidenceViewer({ clause }) {
+export default function EvidenceViewer({ clause, onOpenUpload }) {
   const { showToast } = useToast();
-  const { uploadedFile, pdfObjectUrl, fileName, fileSizeKb } = useVerification();
+  const { uploadedFile, pdfObjectUrl, fileName, fileSizeKb, startVerificationWorkflow } = useVerification();
   const [zoom, setZoom] = useState(150);
-  const [activePage, setActivePage] = useState(clause?.pageNumber || 14);
+  const [activePage, setActivePage] = useState(clause?.pageNumber || 1);
+  const fileInputRef = useRef(null);
 
   React.useEffect(() => {
     if (clause?.pageNumber) {
@@ -15,198 +16,127 @@ export default function EvidenceViewer({ clause }) {
     }
   }, [clause]);
 
-  if (!clause) {
-    return (
-      <div className="bg-white rounded-lg border border-slate-200 h-full flex items-center justify-center text-slate-400 text-xs">
-        Select a clause to inspect document evidence
-      </div>
-    );
-  }
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      startVerificationWorkflow(file);
+    }
+  };
 
-  const isIssue = clause.status === 'ISSUE';
+  const handleSelectFile = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    } else if (onOpenUpload) {
+      onOpenUpload();
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg border border-slate-200 shadow-2xs flex flex-col h-full overflow-hidden font-sans">
+      {/* Hidden File Input for Native File Picker */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept=".pdf,.docx,.xlsx,.jpg,.png"
+        className="hidden"
+      />
+
       {/* Top Controls Bar */}
-      <div className="px-3.5 py-2 border-b border-slate-200 bg-white flex items-center justify-between shrink-0 text-xs">
+      <div className="px-3.5 py-2.5 border-b border-slate-200 bg-white flex items-center justify-between shrink-0 text-xs">
         <div className="flex items-center space-x-2 truncate pr-2">
-          <span className="font-semibold text-slate-900 truncate text-[11px] uppercase tracking-wide">
+          <span className="font-bold text-slate-900 truncate text-[11px] uppercase tracking-wide">
             DOCUMENT READER AND EVIDENCE
           </span>
-          <span className="text-[10px] text-blue-600 font-mono bg-blue-50 px-2 py-0.5 rounded border border-blue-200 truncate">
-            {clause.documentFileName || fileName}
-          </span>
+          {fileName && (
+            <span className="text-[10px] text-blue-600 font-mono bg-blue-50 px-2 py-0.5 rounded border border-blue-200 truncate">
+              {fileName}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center space-x-3 shrink-0 text-[11px] text-slate-500">
-          <div>
-            Page <strong className="text-slate-900 font-semibold">{activePage}</strong> of {clause.totalPages || 48}
-          </div>
+          {pdfObjectUrl ? (
+            <>
+              <div>
+                Page <strong className="text-slate-900 font-semibold">{activePage}</strong> of {clause?.totalPages || 1}
+              </div>
 
-          <div className="flex items-center space-x-1 border border-slate-200 rounded bg-slate-50 px-1 py-0.5">
-            <button
-              onClick={() => setZoom(prev => Math.max(60, prev - 20))}
-              className="p-0.5 hover:bg-slate-200 rounded text-slate-600 font-bold"
-            >
-              -
-            </button>
-            <span className="px-1 font-medium text-slate-700 text-[10px] min-w-[32px] text-center">{zoom}%</span>
-            <button
-              onClick={() => setZoom(prev => Math.min(200, prev + 20))}
-              className="p-0.5 hover:bg-slate-200 rounded text-slate-600 font-bold"
-            >
-              +
-            </button>
-          </div>
+              <div className="flex items-center space-x-1 border border-slate-200 rounded bg-slate-50 px-1 py-0.5">
+                <button
+                  onClick={() => setZoom(prev => Math.max(60, prev - 20))}
+                  className="p-0.5 hover:bg-slate-200 rounded text-slate-600 font-bold"
+                >
+                  -
+                </button>
+                <span className="px-1 font-medium text-slate-700 text-[10px] min-w-[32px] text-center">{zoom}%</span>
+                <button
+                  onClick={() => setZoom(prev => Math.min(200, prev + 20))}
+                  className="p-0.5 hover:bg-slate-200 rounded text-slate-600 font-bold"
+                >
+                  +
+                </button>
+              </div>
 
-          <button
-            onClick={() => showToast(`Expanded Document Evidence View`, 'info')}
-            className="p-1 hover:bg-slate-100 rounded text-slate-600 transition-colors"
-          >
-            <Maximize2 className="w-3.5 h-3.5 stroke-[1.8]" />
-          </button>
+              <button
+                onClick={() => showToast(`Expanded Document Evidence View`, 'info')}
+                className="p-1 hover:bg-slate-100 rounded text-slate-600 transition-colors"
+              >
+                <Maximize2 className="w-3.5 h-3.5 stroke-[1.8]" />
+              </button>
+            </>
+          ) : (
+            <span className="text-slate-400 text-[11px] italic">No document uploaded yet</span>
+          )}
         </div>
       </div>
 
-      {/* Main Document Viewer Canvas */}
-      <div className="flex-1 bg-[#2C323B]/10 p-3 overflow-auto flex items-start justify-center relative">
+      {/* Main Document Area */}
+      <div className="flex-1 bg-[#F8FAFC] p-4 overflow-auto flex items-center justify-center relative">
         {pdfObjectUrl ? (
           <div className="w-full h-full min-h-[500px] flex flex-col items-center">
             <iframe
               src={`${pdfObjectUrl}#page=${activePage}`}
               title="Uploaded PDF Document"
-              className="w-full h-full min-h-[520px] rounded border border-slate-300 shadow-md bg-white"
+              className="w-full h-full min-h-[520px] rounded-lg border border-slate-300 shadow-md bg-white"
             />
           </div>
         ) : (
-          <div className="flex gap-3 max-w-full">
-            {/* Page Thumbnails sidebar preview */}
-            <div className="hidden lg:flex flex-col space-y-2 shrink-0">
-              {[1, 2, clause.pageNumber || 14, 15, 16].map((pNum) => (
-                <div
-                  key={pNum}
-                  onClick={() => setActivePage(pNum)}
-                  className={`w-12 h-16 rounded border text-[9px] flex flex-col items-center justify-between p-1 bg-white cursor-pointer shadow-2xs transition-all ${
-                    pNum === activePage
-                      ? 'border-blue-600 ring-2 ring-blue-500/40 font-semibold'
-                      : 'border-slate-300 opacity-60 hover:opacity-100'
-                  }`}
-                >
-                  <div className="w-full h-10 bg-slate-100 border border-slate-200 rounded-2xs flex flex-col p-0.5 space-y-0.5">
-                    <div className="w-full h-1 bg-slate-300 rounded"></div>
-                    <div className="w-3/4 h-1 bg-slate-300 rounded"></div>
-                    {pNum === activePage && (
-                      <div className="w-full h-2 bg-rose-200 border border-rose-400 rounded"></div>
-                    )}
-                  </div>
-                  <span>{pNum}</span>
-                </div>
-              ))}
+          /* Empty State Dropzone matching ref2.png */
+          <div className="w-full h-full min-h-[480px] bg-white border-2 border-dashed border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center text-center shadow-2xs">
+            <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-4 shadow-2xs">
+              <UploadCloud className="w-10 h-10 stroke-[1.5]" />
             </div>
 
-            {/* Document Canvas Paper */}
-            <div
-              className="bg-white shadow-md border border-slate-300 rounded p-6 sm:p-7 text-slate-900 transition-all duration-200 select-text relative"
-              style={{ width: `${(580 * zoom) / 100}px`, minHeight: '660px' }}
+            <h3 className="text-base font-bold text-slate-900 mb-1">
+              No Document Uploaded
+            </h3>
+            <p className="text-xs text-slate-500 mb-6 max-w-sm leading-relaxed">
+              Please upload a bid document to start the verification process.
+            </p>
+
+            <button
+              onClick={handleSelectFile}
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow-md hover:shadow-lg flex items-center space-x-2 transition-all cursor-pointer transform hover:-translate-y-0.5"
             >
-              <div className="text-center mb-5 border-b border-slate-200 pb-3">
-                <h3 className="font-semibold text-sm tracking-wide uppercase text-slate-900">
-                  {clause.bidderName || "ABC Infra Private Limited"}
-                </h3>
-                <p className="text-[11px] text-slate-600 font-medium mt-0.5">
-                  {clause.documentName || "Financial & Compliance Evidence Document"}
+              <UploadCloud className="w-4 h-4" />
+              <span>Upload Documents</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <div className="bg-blue-50/70 border border-blue-100 rounded-lg p-3 text-left max-w-md mt-10 text-[11px] text-slate-600 flex items-start space-x-2.5">
+              <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <p className="font-semibold text-slate-900">
+                  Supported formats: <span className="font-normal text-slate-600">PDF, DOCX, XLSX, JPG, PNG (Max 25MB)</span>
                 </p>
-                <div className="text-[9px] text-slate-400 text-right mt-1 italic">Extracted from Page {activePage}</div>
-              </div>
-
-              {/* Dynamic Extracted Evidence Highlight Box */}
-              <div className="text-xs space-y-3">
-                <div className="p-3 bg-blue-50/80 border border-blue-200 rounded-lg space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-blue-900 uppercase tracking-wider">
-                      Clause {clause.clauseNumber}: {clause.title}
-                    </span>
-                    <span className="text-[10px] font-mono text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200">
-                      Page {clause.pageNumber || activePage}
-                    </span>
-                  </div>
-                  <div className="text-xs font-bold text-slate-900">
-                    Requirement: <span className="text-slate-700">{clause.requirement}</span>
-                  </div>
-                  <div className="text-xs font-bold text-slate-900">
-                    Found Value: <span className={isIssue ? "text-rose-600 font-black" : "text-emerald-700 font-black"}>{clause.foundValue}</span>
-                  </div>
-                  {clause.variance && (
-                    <div className="text-[11px] font-semibold text-slate-600">
-                      Variance: <span className="text-slate-800">{clause.variance}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="relative p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
-                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                    Raw Extracted Source Snippet
-                  </div>
-                  <p className="text-xs font-mono text-slate-800 bg-white p-2 rounded border border-slate-200 leading-relaxed">
-                    "{clause.extractedText || "Source snippet extracted during PyPDF / OCR analysis."}"
-                  </p>
-
-                  <div className="flex items-center justify-between pt-1 text-[10px] text-slate-500 font-medium">
-                    <span>Confidence Score: <strong className="text-slate-900">{clause.confidenceScore || 92}%</strong></span>
-                    <span>Risk Severity: <strong className={isIssue ? "text-rose-600 font-bold" : "text-emerald-600 font-bold"}>{clause.riskLevel || "LOW"}</strong></span>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-amber-50/60 border border-amber-200 rounded-lg text-xs space-y-1">
-                  <div className="font-bold text-amber-900 uppercase text-[10px]">Evaluation Note</div>
-                  <p className="text-slate-700">{clause.whyItMatters}</p>
-                </div>
+                <p className="text-[10px] text-slate-500 leading-tight">
+                  The document will be automatically processed and verified using AI and government databases.
+                </p>
               </div>
             </div>
           </div>
         )}
-      </div>
-
-      {/* Bottom Pipeline Progress Bar */}
-      <div className="p-3 bg-white border-t border-slate-200 space-y-2 shrink-0 text-xs">
-        <div className="flex items-center space-x-2 text-blue-900 font-semibold text-[11px]">
-          <div className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></div>
-          <span>AI Extraction Status</span>
-          <span className="text-[10px] text-slate-400 font-normal">Active document evaluation complete</span>
-        </div>
-
-        <div className="grid grid-cols-6 gap-2 text-center text-[9px]">
-          <div className="space-y-1">
-            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
-            <div className="text-slate-700 font-medium leading-tight">Document Collected</div>
-            <div className="text-slate-400">1s</div>
-          </div>
-          <div className="space-y-1">
-            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
-            <div className="text-slate-700 font-medium leading-tight">Text Extraction</div>
-            <div className="text-slate-400">2s</div>
-          </div>
-          <div className="space-y-1">
-            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
-            <div className="text-slate-700 font-medium leading-tight">Information Extraction</div>
-            <div className="text-slate-400">3s</div>
-          </div>
-          <div className="space-y-1">
-            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
-            <div className="text-slate-700 font-medium leading-tight">Compliance Checks</div>
-            <div className="text-slate-400">4s</div>
-          </div>
-          <div className="space-y-1">
-            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
-            <div className="text-slate-700 font-medium leading-tight">Evidence Validation</div>
-            <div className="text-slate-400">5s</div>
-          </div>
-          <div className="space-y-1">
-            <div className="w-4 h-4 rounded-full bg-emerald-600 text-white mx-auto flex items-center justify-center font-bold">✓</div>
-            <div className="text-slate-700 font-medium leading-tight">Final Analysis</div>
-            <div className="text-slate-400">6s</div>
-          </div>
-        </div>
       </div>
     </div>
   );

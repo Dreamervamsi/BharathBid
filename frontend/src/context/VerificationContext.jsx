@@ -11,20 +11,20 @@ export const INITIAL_CLAUSES = [
     title: "Average Annual Turnover",
     category: "Eligibility & Financial",
     requirement: "Min. ₹ 5.00 Crore",
-    status: "ISSUE",
+    status: "PENDING",
     requiredValue: "₹ 5.00 Crore",
-    foundValue: "₹ 3.53 Crore",
-    variance: "₹ 1.47 Crore (29.4% below requirement)",
-    documentName: "Statement of Profit and Loss FY 2022-23",
-    documentCode: "P&L FY 2022-23",
-    documentFileName: "Statement of Profit & Loss FY 2022-23.pdf",
-    pageNumber: 14,
-    totalPages: 48,
-    confidenceScore: 92,
-    extractedText: "Revenue from Operations ₹ 3,53,00,000",
-    riskLevel: "HIGH RISK",
-    issueTitle: "TURNOVER BELOW REQUIRED",
-    whyItMatters: "Tender Clause 3.2.1 requires minimum average annual turnover of ₹5.00 Cr for the last 3 financial years. The vendor has declared ₹3.53 Cr in FY 2022-23.",
+    foundValue: "Pending Analysis",
+    variance: "Pending",
+    documentName: "Statement of Profit and Loss",
+    documentCode: "P&L",
+    documentFileName: "",
+    pageNumber: 1,
+    totalPages: 1,
+    confidenceScore: 0,
+    extractedText: "",
+    riskLevel: "PENDING",
+    issueTitle: "PENDING EVALUATION",
+    whyItMatters: "Upload bid document to verify financial turnover criteria.",
     decision: null,
     remarks: ""
   },
@@ -34,43 +34,66 @@ export const INITIAL_CLAUSES = [
     title: "Net Worth",
     category: "Eligibility & Financial",
     requirement: "Positive Net Worth",
-    status: "PASSED",
+    status: "PENDING",
     requiredValue: "Positive (> ₹ 0)",
-    foundValue: "₹ 12.40 Crore",
-    variance: "Compliant (+₹ 12.40 Cr)",
-    documentName: "Audited Balance Sheet FY 2022-23",
-    documentCode: "BS FY 2022-23",
-    documentFileName: "Audited_Balance_Sheet_2023.pdf",
-    pageNumber: 8,
-    totalPages: 32,
-    confidenceScore: 98,
-    extractedText: "Shareholders Equity & Capital reserves: ₹ 12,40,00,000",
-    riskLevel: "LOW RISK",
-    issueTitle: "NET WORTH COMPLIANT",
-    whyItMatters: "Vendor maintains a healthy positive net worth of ₹ 12.40 Crore satisfying clause 3.2.2.",
+    foundValue: "Pending Analysis",
+    variance: "Pending",
+    documentName: "Audited Balance Sheet",
+    documentCode: "BS",
+    documentFileName: "",
+    pageNumber: 1,
+    totalPages: 1,
+    confidenceScore: 0,
+    extractedText: "",
+    riskLevel: "PENDING",
+    issueTitle: "PENDING EVALUATION",
+    whyItMatters: "Upload bid document to verify net worth criteria.",
     decision: null,
     remarks: ""
   },
   {
     id: "3.2.3",
     clauseNumber: "3.2.3",
+    title: "Similar Experience",
+    category: "Eligibility & Financial",
+    requirement: "Similar Contract Order",
+    status: "PENDING",
+    requiredValue: "Min. 1 Contract",
+    foundValue: "Pending Analysis",
+    variance: "Pending",
+    documentName: "Experience Certificate",
+    documentCode: "EXP",
+    documentFileName: "",
+    pageNumber: 1,
+    totalPages: 1,
+    confidenceScore: 0,
+    extractedText: "",
+    riskLevel: "PENDING",
+    issueTitle: "PENDING EVALUATION",
+    whyItMatters: "Upload bid document to verify past experience criteria.",
+    decision: null,
+    remarks: ""
+  },
+  {
+    id: "3.2.4",
+    clauseNumber: "3.2.4",
     title: "GST Registration",
-    category: "Eligibility & Statutory",
+    category: "Eligibility & Financial",
     requirement: "Valid Active GSTIN",
-    status: "PASSED",
-    requiredValue: "Valid GSTIN",
-    foundValue: "GSTIN Active",
-    variance: "Verified Active",
+    status: "PENDING",
+    requiredValue: "Valid Active GSTIN",
+    foundValue: "Pending Analysis",
+    variance: "Pending",
     documentName: "GST Certificate",
-    documentCode: "GST-REG",
-    documentFileName: "GST_Registration.pdf",
-    pageNumber: 2,
-    totalPages: 2,
-    confidenceScore: 98,
-    extractedText: "GSTIN 07AAAAA0000A1Z5 Status: ACTIVE",
-    riskLevel: "LOW RISK",
-    issueTitle: "GST REGISTRATION VERIFIED",
-    whyItMatters: "Tax compliance verified active on GST portal.",
+    documentCode: "GST",
+    documentFileName: "",
+    pageNumber: 1,
+    totalPages: 1,
+    confidenceScore: 0,
+    extractedText: "",
+    riskLevel: "PENDING",
+    issueTitle: "PENDING EVALUATION",
+    whyItMatters: "Upload bid document to verify GST compliance.",
     decision: null,
     remarks: ""
   },
@@ -78,22 +101,22 @@ export const INITIAL_CLAUSES = [
     id: "4.1",
     clauseNumber: "4.1",
     title: "OEM Authorization",
-    category: "Technical Eligibility",
+    category: "Technical",
     requirement: "Manufacturer Authorization Form (MAF)",
-    status: "ISSUE",
+    status: "PENDING",
     requiredValue: "Required OEM Certificate",
-    foundValue: "Not Found",
-    variance: "Required Attachment Missing",
+    foundValue: "Pending Analysis",
+    variance: "Pending",
     documentName: "OEM Authorization Letter",
-    documentCode: "OEM-MAF",
-    documentFileName: "OEM_Authorization.pdf",
-    pageNumber: 15,
-    totalPages: 48,
+    documentCode: "OEM",
+    documentFileName: "",
+    pageNumber: 1,
+    totalPages: 1,
     confidenceScore: 0,
-    extractedText: "OEM Authorization letter missing",
-    riskLevel: "HIGH RISK",
-    issueTitle: "OEM AUTHORIZATION MISSING",
-    whyItMatters: "Vendor must present authorized seller certificate from original equipment manufacturer.",
+    extractedText: "",
+    riskLevel: "PENDING",
+    issueTitle: "PENDING EVALUATION",
+    whyItMatters: "Upload bid document to verify OEM authorization.",
     decision: null,
     remarks: ""
   },
@@ -101,51 +124,75 @@ export const INITIAL_CLAUSES = [
     id: "4.2",
     clauseNumber: "4.2",
     title: "Make in India Compliance",
-    category: "Technical Eligibility",
+    category: "Technical",
     requirement: "Local Content Declaration (>= 50%)",
-    status: "PASSED",
+    status: "PENDING",
     requiredValue: "Min. 50% Local Content",
-    foundValue: "62% Declared",
-    variance: "Compliant",
-    documentName: "MII Self Declaration",
-    documentCode: "MII-DECL",
-    documentFileName: "MII_Declaration.pdf",
-    pageNumber: 16,
-    totalPages: 48,
-    confidenceScore: 91,
-    extractedText: "Local content percentage declared: 62%",
-    riskLevel: "LOW RISK",
-    issueTitle: "MII COMPLIANCE VERIFIED",
-    whyItMatters: "Public procurement indigenous manufacturing preference policy.",
+    foundValue: "Pending Analysis",
+    variance: "Pending",
+    documentName: "MII Declaration",
+    documentCode: "MII",
+    documentFileName: "",
+    pageNumber: 1,
+    totalPages: 1,
+    confidenceScore: 0,
+    extractedText: "",
+    riskLevel: "PENDING",
+    issueTitle: "PENDING EVALUATION",
+    whyItMatters: "Upload bid document to verify local content declaration.",
+    decision: null,
+    remarks: ""
+  },
+  {
+    id: "4.3",
+    clauseNumber: "4.3",
+    title: "Past Performance",
+    category: "Technical",
+    requirement: "Satisfactory Client Feedback",
+    status: "PENDING",
+    requiredValue: "Satisfactory Performance",
+    foundValue: "Pending Analysis",
+    variance: "Pending",
+    documentName: "Performance Report",
+    documentCode: "PERF",
+    documentFileName: "",
+    pageNumber: 1,
+    totalPages: 1,
+    confidenceScore: 0,
+    extractedText: "",
+    riskLevel: "PENDING",
+    issueTitle: "PENDING EVALUATION",
+    whyItMatters: "Upload bid document to verify past performance.",
     decision: null,
     remarks: ""
   }
+];
+
+export const DEFAULT_PIPELINE_STEPS = [
+  { id: 1, label: "Document Collected", desc: "Document received and verified", status: "PENDING", time: "" },
+  { id: 2, label: "Extracting Document Information", desc: "Reading company details, financial data...", status: "PENDING", time: "" },
+  { id: 3, label: "Checking Financial Eligibility", desc: "Analyzing revenue and turnover...", status: "PENDING", time: "" },
+  { id: 4, label: "Checking Certificate Requirements", desc: "Validating GST, PAN, Udyam, etc.", status: "PENDING", time: "" },
+  { id: 5, label: "Cross-Validation", desc: "Matching data across sources", status: "PENDING", time: "" },
+  { id: 6, label: "Generating Findings", desc: "Creating compliance report", status: "PENDING", time: "" }
 ];
 
 export const VerificationProvider = ({ children }) => {
   const { showToast } = useToast();
   const [activeSession, setActiveSession] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [currentStage, setCurrentStage] = useState(2);
+  const [currentStage, setCurrentStage] = useState(1);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [pdfObjectUrl, setPdfObjectUrl] = useState(null);
-  const [fileName, setFileName] = useState("Statement of Profit and Loss FY 2022-23.pdf");
-  const [fileSizeKb, setFileSizeKb] = useState("4.2");
+  const [fileName, setFileName] = useState("");
+  const [fileSizeKb, setFileSizeKb] = useState("");
 
   const [clauses, setClauses] = useState(INITIAL_CLAUSES);
   const [selectedClause, setSelectedClause] = useState(INITIAL_CLAUSES[0]);
   const [revealedFindings, setFindings] = useState([]);
-  const [liveScore, setScore] = useState(68);
-  const [counters, setCounters] = useState({ passed: 3, issues: 2, review: 0 });
-
-  const [pipelineSteps, setPipelineSteps] = useState([
-    { id: 1, label: "Document Collected", desc: "Document received and verified", status: "COMPLETED", time: "2s" },
-    { id: 2, label: "Extracting Document Information", desc: "Company name, financial data, certificates...", status: "PROCESSING", time: "5s" },
-    { id: 3, label: "Checking Financial Eligibility", desc: "Analyzing revenue and turnover...", status: "PENDING", time: "8s" },
-    { id: 4, label: "Checking Certificate Requirements", desc: "Validating GST, PAN, Udyam, etc.", status: "PENDING" },
-    { id: 5, label: "Cross-Validation", desc: "Matching data across sources", status: "PENDING" },
-    { id: 6, label: "Generating Findings", desc: "Creating compliance report", status: "PENDING" }
-  ]);
+  const [liveScore, setScore] = useState(0);
+  const [counters, setCounters] = useState({ passed: 0, issues: 0, review: 0 });
+  const [pipelineSteps, setPipelineSteps] = useState(DEFAULT_PIPELINE_STEPS);
 
   const selectClause = (clauseOrId) => {
     if (!clauseOrId) return;
@@ -155,28 +202,25 @@ export const VerificationProvider = ({ children }) => {
     setSelectedClause(found);
   };
 
-  const startVerificationWorkflow = async (file, caseId = "GEM/2024/B/19102") => {
+  const startVerificationWorkflow = async (file, caseId = "GEM/2024/9/19102") => {
+    if (!file) return;
+
     if (isProcessing) {
       showToast('A verification session is already in progress.', 'warning');
       return;
     }
 
-    let fileObjUrl = null;
-    let name = "Statement of Profit and Loss FY 2022-23.pdf";
-    let size = "4.2";
+    const fileObjUrl = URL.createObjectURL(file);
+    const name = file.name;
+    const size = (file.size / (1024 * 1024)).toFixed(1);
 
-    if (file) {
-      setUploadedFile(file);
-      fileObjUrl = URL.createObjectURL(file);
-      setPdfObjectUrl(fileObjUrl);
-      name = file.name;
-      size = (file.size / (1024 * 1024)).toFixed(1);
-      setFileName(name);
-      setFileSizeKb(size);
-    }
+    setUploadedFile(file);
+    setPdfObjectUrl(fileObjUrl);
+    setFileName(name);
+    setFileSizeKb(size);
 
     setIsProcessing(true);
-    setCurrentStage(2);
+    setCurrentStage(1);
     setFindings([]);
     setScore(0);
     setCounters({ passed: 0, issues: 0, review: 0 });
@@ -187,11 +231,11 @@ export const VerificationProvider = ({ children }) => {
 
     setPipelineSteps([
       { id: 1, label: "Document Collected", desc: "Document received and verified", status: "COMPLETED", time: "1s" },
-      { id: 2, label: "Extracting Document Information", desc: "Running PyPDF text & entity extraction...", status: "PROCESSING", time: "3s" },
-      { id: 3, label: "Checking Financial Eligibility", desc: "Analyzing revenue, turnover and net worth...", status: "PENDING", time: "5s" },
-      { id: 4, label: "Checking Certificate Requirements", desc: "Validating GST, PAN, OEM, MII...", status: "PENDING" },
-      { id: 5, label: "Cross-Validation", desc: "Matching extracted values against tender rules", status: "PENDING" },
-      { id: 6, label: "Generating Findings", desc: "Creating evidence findings and risk score", status: "PENDING" }
+      { id: 2, label: "Extracting Document Information", desc: "Reading company details, financial data...", status: "PROCESSING", time: "3s" },
+      { id: 3, label: "Checking Financial Eligibility", desc: "Analyzing revenue and turnover...", status: "PENDING", time: "" },
+      { id: 4, label: "Checking Certificate Requirements", desc: "Validating GST, PAN, Udyam, etc.", status: "PENDING", time: "" },
+      { id: 5, label: "Cross-Validation", desc: "Matching data across sources", status: "PENDING", time: "" },
+      { id: 6, label: "Generating Findings", desc: "Creating compliance report", status: "PENDING", time: "" }
     ]);
 
     setActiveSession({ filename: name, fileSizeKb: size, pdfObjectUrl: fileObjUrl });
@@ -199,17 +243,24 @@ export const VerificationProvider = ({ children }) => {
 
     try {
       let analysisData = null;
-      if (file) {
-        const uploadRes = await uploadDocument(caseId, file);
-        if (uploadRes && uploadRes.analysis) {
-          analysisData = uploadRes.analysis;
-        }
+      const uploadRes = await uploadDocument(caseId, file);
+      if (uploadRes && uploadRes.analysis) {
+        analysisData = uploadRes.analysis;
       }
 
+      // Step 2 Completed -> Step 3 Processing
       setTimeout(() => {
-        setPipelineSteps(prev => prev.map(s => s.id === 2 ? { ...s, status: "COMPLETED" } : s.id === 3 ? { ...s, status: "PROCESSING" } : s));
-      }, 800);
+        setCurrentStage(2);
+        setPipelineSteps(prev => prev.map(s => s.id === 2 ? { ...s, status: "COMPLETED" } : s.id === 3 ? { ...s, status: "PROCESSING", time: "5s" } : s));
+      }, 1000);
 
+      // Step 3 Completed -> Step 4 Processing
+      setTimeout(() => {
+        setCurrentStage(3);
+        setPipelineSteps(prev => prev.map(s => s.id === 3 ? { ...s, status: "COMPLETED" } : s.id === 4 ? { ...s, status: "PROCESSING", time: "7s" } : s));
+      }, 2000);
+
+      // Final completion
       setTimeout(() => {
         if (analysisData && analysisData.clauses) {
           setClauses(analysisData.clauses);
@@ -223,18 +274,13 @@ export const VerificationProvider = ({ children }) => {
           if (analysisData.counters) {
             setCounters(analysisData.counters);
           }
-        } else {
-          setClauses(INITIAL_CLAUSES);
-          setSelectedClause(INITIAL_CLAUSES[0]);
-          setScore(68);
-          setCounters({ passed: 3, issues: 2, review: 0 });
         }
 
         setPipelineSteps(prev => prev.map(s => ({ ...s, status: "COMPLETED" })));
         setCurrentStage(4);
         setIsProcessing(false);
         showToast('✓ AI Verification & Rule Engine Analysis Complete!', 'success');
-      }, 1800);
+      }, 3200);
 
     } catch (err) {
       console.error("Verification error:", err);
@@ -272,18 +318,18 @@ export const useVerification = () => {
     return {
       activeSession: null,
       isProcessing: false,
-      currentStage: 2,
+      currentStage: 1,
       uploadedFile: null,
       pdfObjectUrl: null,
-      fileName: "Statement of Profit and Loss FY 2022-23.pdf",
-      fileSizeKb: "4.2",
+      fileName: "",
+      fileSizeKb: "",
       clauses: INITIAL_CLAUSES,
       selectedClause: INITIAL_CLAUSES[0],
       selectClause: () => {},
       revealedFindings: [],
-      liveScore: 68,
-      counters: { passed: 3, issues: 2, review: 0 },
-      pipelineSteps: [],
+      liveScore: 0,
+      counters: { passed: 0, issues: 0, review: 0 },
+      pipelineSteps: DEFAULT_PIPELINE_STEPS,
       startVerificationWorkflow: () => {}
     };
   }

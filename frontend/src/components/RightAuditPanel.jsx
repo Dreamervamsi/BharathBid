@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  FileText, CheckCircle2, Loader2, AlertCircle, HelpCircle, AlertOctagon, Info 
+  FileText, CheckCircle2, Loader2, AlertCircle, HelpCircle, AlertOctagon, Info, SearchCheck 
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useVerification } from '../context/VerificationContext';
@@ -13,7 +13,8 @@ export default function RightAuditPanel() {
     pipelineSteps, 
     selectClause, 
     fileName, 
-    fileSizeKb 
+    fileSizeKb,
+    pdfObjectUrl
   } = useVerification();
 
   const handleCardClick = (item) => {
@@ -32,13 +33,19 @@ export default function RightAuditPanel() {
         </div>
         <div className="min-w-0 flex-1">
           <h4 className="font-semibold text-slate-900 text-xs truncate leading-tight">
-            {fileName}
+            {fileName || "No Document Uploaded"}
           </h4>
-          <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 inline-block mt-0.5">
-            Uploaded
-          </span>
+          {pdfObjectUrl ? (
+            <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 inline-block mt-0.5">
+              Uploaded
+            </span>
+          ) : (
+            <span className="text-[10px] text-slate-500 font-medium bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200 inline-block mt-0.5">
+              Pending Upload
+            </span>
+          )}
           <p className="text-[10px] text-slate-400 mt-0.5 font-normal">
-            {fileSizeKb} MB • 48 pages • 14 Mar 2025, 02:47 PM
+            {pdfObjectUrl ? `${fileSizeKb} MB • Active File` : "Upload a bid document to start verification"}
           </p>
         </div>
       </div>
@@ -91,8 +98,8 @@ export default function RightAuditPanel() {
       </div>
 
       {/* LIVE FINDINGS STREAM */}
-      <div className="p-3 space-y-2 overflow-y-auto flex-1 bg-white">
-        <div className="flex items-center justify-between text-[10px] font-semibold text-slate-500 uppercase tracking-wider pb-1 border-b border-slate-100">
+      <div className="p-3 space-y-2 overflow-y-auto flex-1 bg-white flex flex-col">
+        <div className="flex items-center justify-between text-[10px] font-semibold text-slate-500 uppercase tracking-wider pb-1 border-b border-slate-100 shrink-0">
           <span>LIVE FINDINGS</span>
           <span className="text-blue-600 text-[10px] font-normal cursor-pointer hover:underline">
             View All ({revealedFindings.length})
@@ -100,8 +107,15 @@ export default function RightAuditPanel() {
         </div>
 
         {revealedFindings.length === 0 ? (
-          <div className="py-6 text-center text-slate-400 text-[11px] font-normal">
-            No findings generated yet...
+          /* Empty State matching ref2.png */
+          <div className="my-auto py-8 px-4 flex flex-col items-center justify-center text-center">
+            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2">
+              <SearchCheck className="w-6 h-6 stroke-[1.5]" />
+            </div>
+            <h5 className="font-bold text-slate-900 text-xs mb-1">No findings yet</h5>
+            <p className="text-[10px] text-slate-400 max-w-[180px] leading-relaxed">
+              Findings will appear here as the verification process progresses.
+            </p>
           </div>
         ) : (
           revealedFindings.map((item, idx) => {
@@ -122,7 +136,7 @@ export default function RightAuditPanel() {
                     <span className="text-[9px] font-semibold text-rose-600 uppercase tracking-wider">HIGH</span>
                   </div>
                   <p className="text-[10px] text-slate-600 font-mono">
-                    ₹ 35,30,000 &lt; ₹ 50,00,000 • Page {item.pageNumber || 14}
+                    {item.description || item.extractedValue}
                   </p>
                 </div>
               );
@@ -145,7 +159,7 @@ export default function RightAuditPanel() {
                     <span className="text-[9px] font-semibold text-amber-700 uppercase tracking-wider">MEDIUM</span>
                   </div>
                   <p className="text-[10px] text-slate-600 font-normal">
-                    Required for eligibility • Not found
+                    {item.description || "Required for eligibility • Not found"}
                   </p>
                 </div>
               );
@@ -166,7 +180,7 @@ export default function RightAuditPanel() {
                   <span className="text-[9px] font-semibold text-emerald-700 uppercase tracking-wider">LOW</span>
                 </div>
                 <p className="text-[10px] text-slate-600 font-normal">
-                  Valid GSTIN found • Page {item.pageNumber || 12}
+                  {item.description || "Requirement satisfied"}
                 </p>
               </div>
             );

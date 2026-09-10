@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TenderClauses from '../components/TenderClauses';
 import EvidenceViewer from '../components/EvidenceViewer';
 import RightAuditPanel from '../components/RightAuditPanel';
@@ -6,7 +6,7 @@ import WorkflowStepper from '../components/WorkflowStepper';
 import DocumentUploadModal from '../components/DocumentUploadModal';
 import ClarificationModal from '../components/ClarificationModal';
 import OfficerDecision from '../components/OfficerDecision';
-import { fetchVerification, saveOfficerDecision } from '../services/api';
+import { saveOfficerDecision } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import { useVerification } from '../context/VerificationContext';
 
@@ -18,8 +18,7 @@ export default function Verification() {
     selectClause, 
     liveScore, 
     counters, 
-    currentStage, 
-    isProcessing 
+    currentStage 
   } = useVerification();
 
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -37,13 +36,7 @@ export default function Verification() {
   return (
     <div className="space-y-3 font-sans animate-fade-up select-none">
       {/* Top Stepper & Compliance Metrics Bar */}
-      <WorkflowStepper
-        currentStage={currentStage}
-        compliance={liveScore}
-        passed={counters.passed}
-        issues={counters.issues}
-        review={counters.review}
-      />
+      <WorkflowStepper />
 
       {/* Main 3-Column Verification Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-[640px] items-stretch">
@@ -59,7 +52,10 @@ export default function Verification() {
 
         {/* Center Column: Actual PDF Document Canvas & Extraction Timeline (6 Cols) */}
         <div className="lg:col-span-6 h-[640px]">
-          <EvidenceViewer clause={selectedClause} />
+          <EvidenceViewer
+            clause={selectedClause}
+            onOpenUpload={() => setIsUploadOpen(true)}
+          />
         </div>
 
         {/* Right Column: Real-Time Verification Pipeline & Live Findings (3 Cols) */}

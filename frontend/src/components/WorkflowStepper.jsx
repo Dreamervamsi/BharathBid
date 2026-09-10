@@ -5,21 +5,17 @@ import { useVerification } from '../context/VerificationContext';
 
 export default function WorkflowStepper() {
   const { showToast } = useToast();
-  const { currentStage, liveScore, revealedFindings, revealedChecks } = useVerification();
+  const { currentStage, liveScore, counters } = useVerification();
 
   const steps = [
-    { number: 1, title: 'Documents', subtitle: 'Collected' },
+    { number: 1, title: 'Documents', subtitle: 'Upload & Verify' },
     { number: 2, title: 'Analysis', subtitle: 'AI Extraction & Checks' },
     { number: 3, title: 'Evidence', subtitle: 'Review & Validate' },
     { number: 4, title: 'Decision', subtitle: 'Officer Action' },
   ];
 
-  const passedCount = revealedFindings.filter(f => f.type === 'PASSED').length;
-  const issuesCount = revealedFindings.filter(f => f.type === 'RED_FLAG').length;
-  const reviewCount = revealedFindings.filter(f => f.type === 'WARNING').length;
-
   return (
-    <div className="bg-white border-b border-slate-200 px-6 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="bg-white rounded-lg border border-slate-200 p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs">
       {/* Stepper Steps */}
       <div className="flex items-center space-x-2 lg:space-x-4 overflow-x-auto">
         {steps.map((step, idx) => {
@@ -37,7 +33,7 @@ export default function WorkflowStepper() {
                     isCompleted
                       ? 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300'
                       : isCurrent
-                      ? 'bg-slate-900 text-white shadow-xs ring-2 ring-slate-900 ring-offset-1'
+                      ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-500/30'
                       : 'bg-slate-100 text-slate-400 border border-slate-200'
                   }`}
                 >
@@ -51,11 +47,6 @@ export default function WorkflowStepper() {
                   <div className="text-[10px] text-slate-500 font-medium">
                     {step.subtitle}
                   </div>
-                  {isCurrent && (
-                    <div className="text-[9px] font-bold text-blue-600 uppercase tracking-wider">
-                      You are here
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -67,9 +58,9 @@ export default function WorkflowStepper() {
         })}
       </div>
 
-      {/* Dynamic Compliance Summary Quick Stats */}
+      {/* Dynamic Compliance Summary Quick Stats matching ref2.png */}
       <div
-        onClick={() => showToast(`Overall Compliance: ${liveScore}% (Passed: ${passedCount}, Issues: ${issuesCount}, Review: ${reviewCount})`, 'info')}
+        onClick={() => showToast(`Overall Compliance: ${liveScore}% (Passed: ${counters.passed}, Issues: ${counters.issues}, Review: ${counters.review})`, 'info')}
         className="flex items-center space-x-4 bg-slate-50 border border-slate-200 rounded-lg px-4 py-1.5 shrink-0 cursor-pointer hover:border-slate-400 transition-colors"
       >
         <div>
@@ -86,15 +77,15 @@ export default function WorkflowStepper() {
 
         <div className="flex items-center space-x-3 text-xs">
           <div className="text-center">
-            <span className="text-emerald-700 font-extrabold block text-sm">{passedCount}</span>
+            <span className="text-emerald-700 font-extrabold block text-sm">{counters.passed}</span>
             <span className="text-[10px] text-slate-500 font-medium">Passed</span>
           </div>
           <div className="text-center">
-            <span className="text-rose-600 font-extrabold block text-sm">{issuesCount}</span>
+            <span className="text-rose-600 font-extrabold block text-sm">{counters.issues}</span>
             <span className="text-[10px] text-slate-500 font-medium">Issues</span>
           </div>
           <div className="text-center">
-            <span className="text-amber-600 font-extrabold block text-sm">{reviewCount}</span>
+            <span className="text-amber-600 font-extrabold block text-sm">{counters.review}</span>
             <span className="text-[10px] text-slate-500 font-medium">Review</span>
           </div>
         </div>
