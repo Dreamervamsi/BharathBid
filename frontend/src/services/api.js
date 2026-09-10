@@ -112,6 +112,46 @@ export const fetchVerification = async (id = "GEM/2024/B/19102") => {
   return fallback;
 };
 
+export const fetchVerificationQueue = async () => {
+  try {
+    const res = await fetch(`${API_BASE}/verifications`);
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (e) {
+    console.warn("Using fallback mock data for verification queue");
+  }
+  return [
+    {
+      caseId: "GEM/2024/B/19102",
+      bidderName: "ABC Infra Private Limited",
+      tenderName: "Construction & Civil Works",
+      tenderValue: "₹ 5.00 Cr",
+      overallCompliance: 68,
+      statusLabel: "Verification in Progress",
+      officerName: "Arjun Singh"
+    },
+    {
+      caseId: "GEM/2024/B/18442",
+      bidderName: "TechServe Global India",
+      tenderName: "IT Hardware & Server Procurement",
+      tenderValue: "₹ 2.80 Cr",
+      overallCompliance: 92,
+      statusLabel: "Completed",
+      officerName: "Priya Sharma"
+    },
+    {
+      caseId: "GEM/2024/B/17391",
+      bidderName: "Apex Logistics Ltd",
+      tenderName: "Supply Chain & Fleet Services",
+      tenderValue: "₹ 12.10 Cr",
+      overallCompliance: 45,
+      statusLabel: "Requires Senior Review",
+      officerName: "Rajesh Kumar"
+    }
+  ];
+};
+
 export const saveOfficerDecision = async (caseId, clauseId, decision, remarks) => {
   return { success: true, caseId, clauseId, decision, remarks, timestamp: new Date().toISOString() };
 };
