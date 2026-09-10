@@ -162,6 +162,43 @@ export const generateDisqualificationMemo = async (caseId) => {
   return { success: true, url: URL.createObjectURL(blob), isMock: true };
 };
 
+export const fetchAuditTrail = async (caseId = "GEM/2024/B/19102") => {
+  try {
+    const res = await fetch(`${API_BASE}/audit-logs/${caseId}`);
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (e) {
+    console.warn("Using fallback mock data for audit logs");
+  }
+  return [
+    {
+      id: "LOG-9081",
+      timestamp: "12 May 2024, 10:42 AM",
+      user: "Arjun Singh (Procurement Officer)",
+      action: "OFFICER_DECISION_SUBMITTED",
+      caseId: caseId,
+      details: "Confirmed turnover non-compliance clause 3.2.1. Issued clarification request to bidder."
+    },
+    {
+      id: "LOG-9078",
+      timestamp: "12 May 2024, 10:30 AM",
+      user: "SYSTEM_AI_ENGINE",
+      action: "AI_EXTRACTION_COMPLETED",
+      caseId: caseId,
+      details: "Extracted turnover ₹ 3.53 Cr from Statement of Profit & Loss (page 14) with 92% confidence."
+    },
+    {
+      id: "LOG-9072",
+      timestamp: "12 May 2024, 09:15 AM",
+      user: "ABC Infra Pvt Ltd (Bidder)",
+      action: "BIDDER_DOCUMENT_UPLOADED",
+      caseId: caseId,
+      details: "Uploaded financial statements package (P&L, Balance Sheet, CA Certificate)."
+    }
+  ];
+};
+
 export const uploadDocument = async (caseId, file) => {
   return {
     documentId: "doc-" + Date.now(),
