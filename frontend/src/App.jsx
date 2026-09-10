@@ -5,20 +5,22 @@ import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import Verification from './pages/Verification';
 import VerificationQueue from './pages/VerificationQueue';
+import Cases from './pages/Cases';
 import Reports from './pages/Reports';
 import AuditTrail from './pages/AuditTrail';
 import Templates from './pages/Templates';
+import Integrations from './pages/Integrations';
 import SettingsPage from './pages/SettingsPage';
+import HelpSupport from './pages/HelpSupport';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DocumentUploadModal from './components/DocumentUploadModal';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { ToastProvider, useToast } from './context/ToastContext';
-import { VerificationProvider, useVerification } from './context/VerificationContext';
+import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
+import { VerificationProvider } from './context/VerificationContext';
 
 function MainLayout() {
   const [isQuickUploadOpen, setIsQuickUploadOpen] = useState(false);
-  const { showToast } = useToast();
 
   return (
     <div className="flex h-screen bg-[#F8FAFC] overflow-hidden font-sans select-none animate-fade-up">
@@ -35,10 +37,13 @@ function MainLayout() {
             <Route path="/dashboard" element={<Dashboard onOpenUpload={() => setIsQuickUploadOpen(true)} />} />
             <Route path="/verification" element={<Verification />} />
             <Route path="/queue" element={<VerificationQueue />} />
+            <Route path="/cases" element={<Cases />} />
             <Route path="/templates" element={<Templates />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/audit" element={<AuditTrail />} />
+            <Route path="/integrations" element={<Integrations />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/help" element={<HelpSupport />} />
             <Route path="*" element={<Navigate to="/verification" replace />} />
           </Routes>
         </main>

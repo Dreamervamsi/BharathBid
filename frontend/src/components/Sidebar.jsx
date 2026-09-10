@@ -1,14 +1,16 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
+  LayoutDashboard,
   SearchCheck, 
   Landmark, 
   FileText, 
+  BookOpen,
   Mail, 
   AlertOctagon, 
+  Network,
   Settings, 
-  HelpCircle,
-  BookOpen
+  HelpCircle 
 } from 'lucide-react';
 import emblemSvg from '../assets/emblem.svg';
 import { useToast } from '../context/ToastContext';
@@ -16,12 +18,14 @@ import { useToast } from '../context/ToastContext';
 export default function Sidebar({ onOpenUpload }) {
   const { showToast } = useToast();
   const navItems = [
+    { name: 'Executive Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Live Verification Workspace', path: '/verification', icon: SearchCheck },
     { name: 'Tenders & Bids Queue', path: '/queue', icon: Landmark, count: 7 },
     { name: 'Cases', path: '/cases', icon: FileText },
-    { name: 'Reports', path: '/reports', icon: Mail },
+    { name: 'Notice Templates', path: '/templates', icon: BookOpen },
+    { name: 'Compliance Reports', path: '/reports', icon: Mail },
     { name: 'Audit Trail', path: '/audit', icon: AlertOctagon },
-    { name: 'Integrations', path: '/integrations', icon: Settings },
+    { name: 'Integrations', path: '/integrations', icon: Network },
     { name: 'Settings', path: '/settings', icon: Settings },
     { name: 'Help & Support', path: '/help', icon: HelpCircle },
   ];
@@ -59,12 +63,12 @@ export default function Sidebar({ onOpenUpload }) {
                 }`
               }
             >
-              <div className="flex items-center space-x-2.5">
+              <div className="flex items-center space-x-2.5 truncate">
                 <Icon className="w-4 h-4 text-slate-300 shrink-0 stroke-[1.8]" />
                 <span className="truncate text-[11px]">{item.name}</span>
               </div>
               {item.count && (
-                <span className="bg-blue-600 text-white font-medium text-[10px] px-1.5 py-0.2 rounded-full">
+                <span className="bg-blue-600 text-white font-medium text-[10px] px-1.5 py-0.2 rounded-full shrink-0">
                   {item.count}
                 </span>
               )}
