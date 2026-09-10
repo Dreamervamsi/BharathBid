@@ -20,9 +20,9 @@ export default function Verification() {
     clauses, 
     selectedClause, 
     selectClause, 
-    liveScore, 
-    counters, 
-    currentStage 
+    loadCaseById,
+    activeCaseId,
+    activeBidderName
   } = useVerification();
 
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -30,7 +30,8 @@ export default function Verification() {
 
   useEffect(() => {
     if (caseIdFromUrl) {
-      showToast(`Active Case Loaded: ${caseIdFromUrl}`, 'info');
+      loadCaseById(caseIdFromUrl);
+      showToast(`Loaded Case ${caseIdFromUrl} into Verification Workspace`, 'info');
     }
   }, [caseIdFromUrl]);
 
@@ -39,7 +40,7 @@ export default function Verification() {
       setIsClarificationOpen(true);
       return;
     }
-    await saveOfficerDecision(caseIdFromUrl || "GEM/2024/9/19102", clauseId, decision, remarks);
+    await saveOfficerDecision(activeCaseId || "GEM/2024/9/19102", clauseId, decision, remarks);
     showToast(`Officer decision saved for Clause ${clauseId}`, 'success');
   };
 
@@ -81,7 +82,7 @@ export default function Verification() {
 
       {/* Modals */}
       <DocumentUploadModal
-        caseId={caseIdFromUrl || "GEM/2024/9/19102"}
+        caseId={activeCaseId || "GEM/2024/9/19102"}
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
       />
@@ -90,7 +91,7 @@ export default function Verification() {
         isOpen={isClarificationOpen}
         onClose={() => setIsClarificationOpen(false)}
         clause={selectedClause}
-        bidderName="ABC Infra Private Limited"
+        bidderName={activeBidderName || "ABC Infra Private Limited"}
       />
     </div>
   );

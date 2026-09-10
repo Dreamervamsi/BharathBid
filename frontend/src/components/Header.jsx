@@ -7,16 +7,15 @@ import { useVerification } from '../context/VerificationContext';
 
 import emblemSvg from '../assets/emblem.svg';
 
-export default function Header({ 
-  caseId = "GEM/2024/9/19102", 
-  bidderId = "BID-ABC-99201",
-  bidderName = "ABC Infra Private Limited", 
-}) {
+export default function Header() {
   const { showToast } = useToast();
-  const { user, logout, isAuthenticated } = useAuth();
-  const { isProcessing, activeSession } = useVerification();
+  const { user, logout } = useAuth();
+  const { isProcessing, activeSession, activeCaseId, activeBidderName } = useVerification();
   const [showMenu, setShowPopup] = useState(false);
   const navigate = useNavigate();
+
+  const caseId = activeCaseId || "GEM/2024/B/19102";
+  const bidderName = activeBidderName || "ABC Infra Private Limited";
 
   const getStatusLabel = () => {
     if (isProcessing) return "Verification In Progress";
