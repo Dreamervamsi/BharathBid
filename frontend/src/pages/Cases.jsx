@@ -149,7 +149,7 @@ export default function Cases() {
             <div className="flex items-center justify-between pt-1">
               <span className="text-[10px] text-slate-400">Submitted: {item.submittedDate}</span>
               <Link
-                to="/verification"
+                to={`/verification?caseId=${encodeURIComponent(item.caseId)}`}
                 onClick={() => showToast(`Opened Case ${item.caseId} in Live Verification`, 'info')}
                 className="py-1 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold flex items-center space-x-1 transition-colors"
               >

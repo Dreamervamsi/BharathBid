@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import TenderClauses from '../components/TenderClauses';
 import EvidenceViewer from '../components/EvidenceViewer';
 import RightAuditPanel from '../components/RightAuditPanel';
@@ -12,6 +13,9 @@ import { useVerification } from '../context/VerificationContext';
 
 export default function Verification() {
   const { showToast } = useToast();
+  const [searchParams] = useSearchParams();
+  const caseIdFromUrl = searchParams.get('caseId');
+
   const { 
     clauses, 
     selectedClause, 
@@ -24,12 +28,18 @@ export default function Verification() {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isClarificationOpen, setIsClarificationOpen] = useState(false);
 
+  useEffect(() => {
+    if (caseIdFromUrl) {
+      showToast(`Active Case Loaded: ${caseIdFromUrl}`, 'info');
+    }
+  }, [caseIdFromUrl]);
+
   const handleSaveDecision = async (clauseId, decision, remarks) => {
     if (decision === 'CLARIFICATION') {
       setIsClarificationOpen(true);
       return;
     }
-    await saveOfficerDecision("GEM/2024/9/19102", clauseId, decision, remarks);
+    await saveOfficerDecision(caseIdFromUrl || "GEM/2024/9/19102", clauseId, decision, remarks);
     showToast(`Officer decision saved for Clause ${clauseId}`, 'success');
   };
 
@@ -71,7 +81,7 @@ export default function Verification() {
 
       {/* Modals */}
       <DocumentUploadModal
-        caseId="GEM/2024/9/19102"
+        caseId={caseIdFromUrl || "GEM/2024/9/19102"}
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
       />

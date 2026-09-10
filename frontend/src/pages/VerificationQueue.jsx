@@ -133,7 +133,7 @@ export default function VerificationQueue() {
                 </td>
                 <td className="py-3.5 px-4 text-right whitespace-nowrap">
                   <Link
-                    to="/verification"
+                    to={`/verification?caseId=${encodeURIComponent(item.id)}`}
                     onClick={() => showToast(`Selected Case ${item.id} for Evidence Inspection`, 'info')}
                     className="inline-flex items-center justify-center space-x-1 py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-bold shadow-2xs transition-colors whitespace-nowrap"
                   >
