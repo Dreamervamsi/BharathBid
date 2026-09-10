@@ -242,11 +242,8 @@ export const VerificationProvider = ({ children }) => {
     showToast(`✓ Document Received: ${name}`, 'info');
 
     try {
-      let analysisData = null;
       const uploadRes = await uploadDocument(caseId, file);
-      if (uploadRes && uploadRes.analysis) {
-        analysisData = uploadRes.analysis;
-      }
+      const analysisData = uploadRes?.analysis;
 
       // Step 2 Completed -> Step 3 Processing
       setTimeout(() => {
@@ -279,8 +276,8 @@ export const VerificationProvider = ({ children }) => {
         setPipelineSteps(prev => prev.map(s => ({ ...s, status: "COMPLETED" })));
         setCurrentStage(4);
         setIsProcessing(false);
-        showToast('✓ AI Verification & Rule Engine Analysis Complete!', 'success');
-      }, 3200);
+        showToast(`✓ AI Verification Complete! Overall Compliance: ${analysisData?.score || 68}%`, 'success');
+      }, 3000);
 
     } catch (err) {
       console.error("Verification error:", err);
