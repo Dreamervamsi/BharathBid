@@ -82,7 +82,7 @@ export default function ClarificationModal({ isOpen, onClose, clause, bidderName
               type="button"
               onClick={handleSend}
               disabled={sent}
-              className="py-1.5 px-4 bg-amber-600 hover:bg-amber-700 text-white rounded text-xs font-bold shadow-2xs flex items-center space-x-1.5"
+              className="py-1.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-bold shadow-2xs flex items-center space-x-1.5"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Dispatch Notice</span>

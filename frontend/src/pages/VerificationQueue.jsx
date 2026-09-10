@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { fetchVerificationQueue } from '../services/api';
 import { Link } from 'react-router-dom';
 import { Search, Filter, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 export default function VerificationQueue() {
+  const { showToast } = useToast();
   const [queue, setQueue] = useState([]);
   const [filter, setFilter] = useState('ALL');
   const [search, setSearch] = useState('');
@@ -46,7 +48,7 @@ export default function VerificationQueue() {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-up">
       <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <h1 className="text-base font-bold text-slate-900 uppercase tracking-wide">Verification Queue</h1>
@@ -70,7 +72,10 @@ export default function VerificationQueue() {
             {['ALL', 'HIGH_RISK', 'REVIEW', 'COMPLETED'].map((f) => (
               <button
                 key={f}
-                onClick={() => setFilter(f)}
+                onClick={() => {
+                  setFilter(f);
+                  showToast(`Filtered queue by: ${f.replace('_', ' ')}`, 'info');
+                }}
                 className={`px-2.5 py-1 rounded transition-colors ${
                   filter === f ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'
                 }`}

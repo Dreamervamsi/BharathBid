@@ -1,7 +1,10 @@
 import React from 'react';
 import { AlertTriangle, Scale, HelpCircle, ShieldAlert } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 export default function FindingsPanel({ clause }) {
+  const { showToast } = useToast();
+
   if (!clause) {
     return (
       <div className="bg-white rounded-lg border border-slate-200 h-full p-4 flex items-center justify-center text-slate-400 text-xs">
@@ -15,7 +18,10 @@ export default function FindingsPanel({ clause }) {
   return (
     <div className="space-y-3 h-full overflow-y-auto pr-1">
       {/* WHAT WE FOUND CARD */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-2xs overflow-hidden">
+      <div
+        onClick={() => showToast(`Finding Details for Clause ${clause.clauseNumber}: ${clause.issueTitle || 'Extracted Evidence'}`, 'info')}
+        className="bg-white rounded-lg border border-slate-200 shadow-2xs overflow-hidden cursor-pointer hover:border-slate-400 transition-colors"
+      >
         <div className="px-3.5 py-2.5 border-b border-slate-200 bg-slate-50 flex items-center space-x-2">
           <AlertTriangle className={`w-4 h-4 ${isIssue ? 'text-rose-600' : 'text-emerald-600'}`} />
           <h2 className="text-xs font-bold text-slate-900 tracking-wider uppercase">WHAT WE FOUND</h2>

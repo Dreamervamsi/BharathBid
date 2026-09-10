@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { Building2, UserPlus, Lock, Mail, User, Briefcase, BadgeCheck, Loader2 } from 'lucide-react';
 
 import emblemSvg from '../assets/emblem.svg';
 
 export default function Register() {
+  const { showToast } = useToast();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,10 +34,12 @@ export default function Register() {
       if (res.ok) {
         const data = await res.json();
         login(data.user, data.token);
+        showToast(`Account registered successfully for ${fullName}!`, 'success');
         navigate('/');
       } else {
         const errData = await res.json().catch(() => ({}));
         setError(errData.error || 'Registration failed. Please try again.');
+        showToast('Registration failed. Please check form details.', 'error');
       }
     } catch (err) {
       // Fallback local auth for SIH demo resilience
@@ -46,6 +50,7 @@ export default function Register() {
         department: department,
         employeeId: employeeId
       }, "gem-token-demo");
+      showToast(`Account registered for ${fullName || 'Officer'} in demo mode!`, 'success');
       navigate('/');
     } finally {
       setLoading(false);
@@ -53,7 +58,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans select-none">
+    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans select-none animate-fade-up">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="inline-flex items-center justify-center p-3 rounded-xl bg-white border border-slate-700 mb-3 shadow-lg">
           <img src={emblemSvg} alt="Government of India Emblem" className="w-16 h-20 object-contain" />

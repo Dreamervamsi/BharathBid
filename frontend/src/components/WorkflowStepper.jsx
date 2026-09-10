@@ -1,13 +1,22 @@
 import React from 'react';
 import { Check, ArrowRight } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import { useVerification } from '../context/VerificationContext';
 
-export default function WorkflowStepper({ currentStage = 3, compliance = 68, passed = 12, issues = 4, review = 3 }) {
+export default function WorkflowStepper() {
+  const { showToast } = useToast();
+  const { currentStage, liveScore, revealedFindings, revealedChecks } = useVerification();
+
   const steps = [
     { number: 1, title: 'Documents', subtitle: 'Collected' },
     { number: 2, title: 'Analysis', subtitle: 'AI Extraction & Checks' },
     { number: 3, title: 'Evidence', subtitle: 'Review & Validate' },
     { number: 4, title: 'Decision', subtitle: 'Officer Action' },
   ];
+
+  const passedCount = revealedFindings.filter(f => f.type === 'PASSED').length;
+  const issuesCount = revealedFindings.filter(f => f.type === 'RED_FLAG').length;
+  const reviewCount = revealedFindings.filter(f => f.type === 'WARNING').length;
 
   return (
     <div className="bg-white border-b border-slate-200 px-6 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -19,7 +28,10 @@ export default function WorkflowStepper({ currentStage = 3, compliance = 68, pas
 
           return (
             <React.Fragment key={step.number}>
-              <div className="flex items-center space-x-2.5 shrink-0">
+              <div
+                onClick={() => showToast(`Stage ${step.number}: ${step.title} (${step.subtitle})`, 'info')}
+                className="flex items-center space-x-2.5 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+              >
                 <div
                   className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                     isCompleted
@@ -55,14 +67,17 @@ export default function WorkflowStepper({ currentStage = 3, compliance = 68, pas
         })}
       </div>
 
-      {/* Compliance Summary Quick Stats */}
-      <div className="flex items-center space-x-4 bg-slate-50 border border-slate-200 rounded-lg px-4 py-1.5 shrink-0">
+      {/* Dynamic Compliance Summary Quick Stats */}
+      <div
+        onClick={() => showToast(`Overall Compliance: ${liveScore}% (Passed: ${passedCount}, Issues: ${issuesCount}, Review: ${reviewCount})`, 'info')}
+        className="flex items-center space-x-4 bg-slate-50 border border-slate-200 rounded-lg px-4 py-1.5 shrink-0 cursor-pointer hover:border-slate-400 transition-colors"
+      >
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Overall Compliance</div>
           <div className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-            <span>{compliance}%</span>
+            <span>{liveScore}%</span>
             <div className="w-16 bg-slate-200 h-1.5 rounded-full overflow-hidden">
-              <div className="bg-amber-500 h-full rounded-full" style={{ width: `${compliance}%` }}></div>
+              <div className="bg-blue-600 h-full rounded-full transition-all duration-300" style={{ width: `${liveScore}%` }}></div>
             </div>
           </div>
         </div>
@@ -71,15 +86,15 @@ export default function WorkflowStepper({ currentStage = 3, compliance = 68, pas
 
         <div className="flex items-center space-x-3 text-xs">
           <div className="text-center">
-            <span className="text-emerald-700 font-extrabold block text-sm">{passed}</span>
+            <span className="text-emerald-700 font-extrabold block text-sm">{passedCount}</span>
             <span className="text-[10px] text-slate-500 font-medium">Passed</span>
           </div>
           <div className="text-center">
-            <span className="text-rose-600 font-extrabold block text-sm">{issues}</span>
+            <span className="text-rose-600 font-extrabold block text-sm">{issuesCount}</span>
             <span className="text-[10px] text-slate-500 font-medium">Issues</span>
           </div>
           <div className="text-center">
-            <span className="text-amber-600 font-extrabold block text-sm">{review}</span>
+            <span className="text-amber-600 font-extrabold block text-sm">{reviewCount}</span>
             <span className="text-[10px] text-slate-500 font-medium">Review</span>
           </div>
         </div>

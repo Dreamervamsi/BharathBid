@@ -1,204 +1,186 @@
 import React from 'react';
 import { 
-  AlertTriangle, ShieldAlert, CheckCircle2, AlertOctagon, 
-  Info, Ban, FileWarning, ShieldX, XCircle 
+  FileText, CheckCircle2, Loader2, AlertCircle, HelpCircle, AlertOctagon, Info 
 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import { useVerification } from '../context/VerificationContext';
 
-export default function RightAuditPanel({ 
-  metadata = {}, 
-  auditFindings = [] 
-}) {
-  // Default findings if none provided
-  const defaultFindings = [
-    {
-      id: 'FIND-101',
-      title: 'Turnover Requirement Discrepancy',
-      type: 'RED_FLAG',
-      category: 'Financial Eligibility',
-      clause: 'Clause 4.1',
-      description: 'Quoted bidder turnover is ₹1.8 Cr against mandatory tender threshold of ₹2.5 Cr.',
-      severity: 'CRITICAL',
-      time: '10:41 AM'
-    },
-    {
-      id: 'FIND-102',
-      title: 'L1 Comparative Report Missing',
-      type: 'WARNING',
-      category: 'GeM GFR Policy',
-      clause: 'Rule 149 (> ₹25k)',
-      description: 'Procurement value is ₹6.5 Lakhs. Online Bidding / Reverse Auction report required.',
-      severity: 'MEDIUM',
-      time: '10:42 AM'
-    },
-    {
-      id: 'FIND-103',
-      title: 'CRAC Certificate Pending',
-      type: 'WARNING',
-      category: 'Post-Contract',
-      clause: 'CRAC Acceptance',
-      description: 'Consignee Receipt and Acceptance Certificate not signed within 10 days of delivery.',
-      severity: 'HIGH',
-      time: '10:42 AM'
-    },
-    {
-      id: 'FIND-104',
-      title: 'CFA Approval Verified',
-      type: 'PASSED',
-      category: 'Competent Authority',
-      clause: 'Approval Order #882',
-      description: 'CFA Financial Sanction order #882 verified via Public Finance Portal.',
-      severity: 'LOW',
-      time: '10:43 AM'
+export default function RightAuditPanel() {
+  const { showToast } = useToast();
+  const { 
+    revealedFindings, 
+    isProcessing, 
+    pipelineSteps, 
+    selectClause, 
+    fileName, 
+    fileSizeKb 
+  } = useVerification();
+
+  const handleCardClick = (item) => {
+    if (item.clause) {
+      selectClause(item.clause);
     }
-  ];
-
-  const findings = auditFindings.length > 0 ? auditFindings : defaultFindings;
-
-  // Red Flag Logic & Rejection Protocol Trigger Calculation
-  const redFlagsCount = findings.filter(f => f.type === 'RED_FLAG').length;
-  const isL1ThresholdViolated = (metadata.estimatedValue > 25000) && (metadata.biddingType === 'Direct Purchase (≤ ₹25,000)');
-  const isDisqualified = redFlagsCount >= 1 || isL1ThresholdViolated || metadata.cracStatus === 'FAILED';
+    showToast(`Inspecting Finding: ${item.title}`, 'info');
+  };
 
   return (
-    <div className="bg-white rounded-lg border border-slate-300 shadow-xs h-full flex flex-col overflow-hidden text-xs">
-      {/* Header */}
-      <div className="bg-[#0B2545] text-white p-3 border-b border-slate-800 flex items-center justify-between shrink-0">
-        <div className="flex items-center space-x-2">
-          <AlertOctagon className="w-4 h-4 text-rose-400 stroke-[2.5]" />
-          <span className="font-extrabold uppercase tracking-wider text-[11px]">
-            Dynamic Audit & Red Flag Stream
-          </span>
+    <div className="bg-white rounded-lg border border-slate-200 shadow-2xs h-full flex flex-col overflow-hidden text-xs font-sans">
+      {/* Top Header Card: Uploaded Document Meta */}
+      <div className="p-3 bg-white border-b border-slate-100 flex items-start space-x-2.5 shrink-0">
+        <div className="p-2 bg-blue-50 text-blue-800 rounded border border-blue-100 shrink-0">
+          <FileText className="w-5 h-5 stroke-[1.8]" />
         </div>
-        <span className="bg-rose-600 text-white font-mono font-black text-[10px] px-2 py-0.5 rounded-full">
-          {findings.length} Finding{findings.length === 1 ? '' : 's'}
-        </span>
+        <div className="min-w-0 flex-1">
+          <h4 className="font-semibold text-slate-900 text-xs truncate leading-tight">
+            {fileName}
+          </h4>
+          <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 inline-block mt-0.5">
+            Uploaded
+          </span>
+          <p className="text-[10px] text-slate-400 mt-0.5 font-normal">
+            {fileSizeKb} MB • 48 pages • 14 Mar 2025, 02:47 PM
+          </p>
+        </div>
       </div>
 
-      {/* DISQUALIFICATION / REJECTION BANNER (TRIGGERED ON CRITICAL FAILURES) */}
-      {isDisqualified && (
-        <div className="bg-[#DC2626] text-white p-3 shadow-md animate-pulse shrink-0 border-b-2 border-rose-900">
-          <div className="flex items-center space-x-2">
-            <ShieldX className="w-6 h-6 stroke-[2.5] text-white shrink-0" />
-            <div>
-              <h3 className="font-black text-xs uppercase tracking-widest text-white leading-tight">
-                BID REJECTED / DISQUALIFIED
-              </h3>
-              <p className="text-[10px] font-bold text-rose-100 mt-0.5">
-                {isL1ThresholdViolated 
-                  ? "CRITICAL VIOLATION: Direct Purchase strategy invalid for value > ₹25,000!" 
-                  : "Critical compliance discrepancy detected during forensic audit."}
-              </p>
-            </div>
+      {/* REAL-TIME VERIFICATION PIPELINE PROGRESSION */}
+      <div className="p-3 border-b border-slate-100 space-y-2 shrink-0">
+        <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+          <span className="flex items-center space-x-1">
+            <FileText className="w-3.5 h-3.5 text-slate-600" />
+            <span>REAL-TIME VERIFICATION</span>
+          </span>
+        </div>
+
+        <div className="space-y-2">
+          {pipelineSteps.map((step) => {
+            const isDone = step.status === 'COMPLETED';
+            const isCurrent = step.status === 'PROCESSING';
+
+            return (
+              <div key={step.id} className="flex items-start space-x-2.5">
+                <div className="shrink-0 mt-0.5">
+                  {isDone ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 stroke-[2]" />
+                  ) : isCurrent ? (
+                    <div className="relative flex items-center justify-center">
+                      <Loader2 className="w-4 h-4 text-blue-600 animate-spin stroke-[2]" />
+                    </div>
+                  ) : (
+                    <div className="w-4 h-4 rounded-full border border-slate-300 bg-slate-50" />
+                  )}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between">
+                    <h5 className={`text-xs font-semibold ${isDone ? 'text-slate-900' : isCurrent ? 'text-blue-900' : 'text-slate-400'}`}>
+                      {step.label}
+                    </h5>
+                    {step.time && (
+                      <span className="text-[10px] text-slate-400 font-mono">{step.time}</span>
+                    )}
+                  </div>
+                  <p className={`text-[10px] ${isCurrent ? 'text-blue-700' : 'text-slate-400'}`}>
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* LIVE FINDINGS STREAM */}
+      <div className="p-3 space-y-2 overflow-y-auto flex-1 bg-white">
+        <div className="flex items-center justify-between text-[10px] font-semibold text-slate-500 uppercase tracking-wider pb-1 border-b border-slate-100">
+          <span>LIVE FINDINGS</span>
+          <span className="text-blue-600 text-[10px] font-normal cursor-pointer hover:underline">
+            View All ({revealedFindings.length})
+          </span>
+        </div>
+
+        {revealedFindings.length === 0 ? (
+          <div className="py-6 text-center text-slate-400 text-[11px] font-normal">
+            No findings generated yet...
           </div>
-        </div>
-      )}
+        ) : (
+          revealedFindings.map((item, idx) => {
+            if (item.type === 'RED_FLAG') {
+              return (
+                <div 
+                  key={item.id || idx}
+                  onClick={() => handleCardClick(item)}
+                  className="bg-rose-50/70 border border-rose-200 rounded-md p-2.5 space-y-1 cursor-pointer hover:border-rose-400 transition-colors animate-fade-up"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-1.5">
+                      <div className="w-4 h-4 rounded-full bg-rose-600 text-white flex items-center justify-center font-semibold text-[9px] shrink-0">
+                        ✕
+                      </div>
+                      <h4 className="font-semibold text-rose-950 text-xs">{item.title}</h4>
+                    </div>
+                    <span className="text-[9px] font-semibold text-rose-600 uppercase tracking-wider">HIGH</span>
+                  </div>
+                  <p className="text-[10px] text-slate-600 font-mono">
+                    ₹ 35,30,000 &lt; ₹ 50,00,000 • Page {item.pageNumber || 14}
+                  </p>
+                </div>
+              );
+            }
 
-      {/* Sequential Pop-up Finding Stream */}
-      <div className="p-3 space-y-3 overflow-y-auto flex-1 font-sans bg-slate-50">
-        <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-          <span>Real-time Audit Stream</span>
-          <span>Stacking Top-to-Bottom</span>
-        </div>
+            if (item.type === 'WARNING') {
+              return (
+                <div 
+                  key={item.id || idx}
+                  onClick={() => handleCardClick(item)}
+                  className="bg-[#FFF8E7] border border-[#FDE68A] rounded-md p-2.5 space-y-1 cursor-pointer hover:border-[#F59E0B] transition-colors animate-fade-up"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-1.5">
+                      <div className="w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center font-semibold text-[9px] shrink-0">
+                        !
+                      </div>
+                      <h4 className="font-semibold text-slate-900 text-xs">{item.title}</h4>
+                    </div>
+                    <span className="text-[9px] font-semibold text-amber-700 uppercase tracking-wider">MEDIUM</span>
+                  </div>
+                  <p className="text-[10px] text-slate-600 font-normal">
+                    Required for eligibility • Not found
+                  </p>
+                </div>
+              );
+            }
 
-        {findings.map((item) => {
-          if (item.type === 'RED_FLAG') {
+            // PASSED CHECKS
             return (
               <div 
-                key={item.id}
-                className="bg-white rounded-lg border-2 border-[#DC2626] shadow-sm p-3 relative overflow-hidden transition-all hover:shadow-md"
+                key={item.id || idx}
+                onClick={() => handleCardClick(item)}
+                className="bg-emerald-50/60 border border-emerald-200 rounded-md p-2.5 space-y-1 cursor-pointer hover:border-emerald-400 transition-colors animate-fade-up"
               >
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-[#DC2626]"></div>
-                <div className="pl-1 space-y-1.5">
-                  <div className="flex items-start justify-between gap-1">
-                    <div className="flex items-center space-x-1.5">
-                      <XCircle className="w-4 h-4 text-[#DC2626] stroke-[2.5]" />
-                      <span className="font-extrabold text-[#DC2626] text-xs uppercase tracking-tight">
-                        {item.title}
-                      </span>
-                    </div>
-                    <span className="bg-rose-100 text-[#DC2626] border border-rose-300 font-black text-[9px] px-1.5 py-0.5 rounded">
-                      SEVERE RED FLAG
-                    </span>
-                  </div>
-
-                  <p className="text-[11px] text-slate-800 font-semibold leading-relaxed">
-                    {item.description}
-                  </p>
-
-                  <div className="pt-1 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                    <span>{item.category} • {item.clause}</span>
-                    <span>{item.time}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          }
-
-          if (item.type === 'WARNING') {
-            return (
-              <div 
-                key={item.id}
-                className="bg-white rounded-lg border-2 border-[#D97706] shadow-sm p-3 relative overflow-hidden transition-all hover:shadow-md"
-              >
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-[#D97706]"></div>
-                <div className="pl-1 space-y-1.5">
-                  <div className="flex items-start justify-between gap-1">
-                    <div className="flex items-center space-x-1.5">
-                      <AlertTriangle className="w-4 h-4 text-[#D97706] stroke-[2.5]" />
-                      <span className="font-extrabold text-[#D97706] text-xs uppercase tracking-tight">
-                        {item.title}
-                      </span>
-                    </div>
-                    <span className="bg-amber-100 text-[#D97706] border border-amber-300 font-black text-[9px] px-1.5 py-0.5 rounded">
-                      WARNING / REVIEW
-                    </span>
-                  </div>
-
-                  <p className="text-[11px] text-slate-800 font-medium leading-relaxed">
-                    {item.description}
-                  </p>
-
-                  <div className="pt-1 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                    <span>{item.category} • {item.clause}</span>
-                    <span>{item.time}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          }
-
-          // PASSED CHECKS
-          return (
-            <div 
-              key={item.id}
-              className="bg-white rounded-lg border border-emerald-300 shadow-2xs p-3 relative overflow-hidden transition-all"
-            >
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-[#16A34A]"></div>
-              <div className="pl-1 space-y-1">
-                <div className="flex items-start justify-between gap-1">
+                <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-[#16A34A] stroke-[2.5]" />
-                    <span className="font-bold text-[#16A34A] text-xs">
-                      {item.title}
-                    </span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 stroke-[2]" />
+                    <h4 className="font-semibold text-emerald-950 text-xs">{item.title}</h4>
                   </div>
-                  <span className="bg-emerald-100 text-[#16A34A] border border-emerald-300 font-extrabold text-[9px] px-1.5 py-0.5 rounded">
-                    PASSED
-                  </span>
+                  <span className="text-[9px] font-semibold text-emerald-700 uppercase tracking-wider">LOW</span>
                 </div>
-
-                <p className="text-[11px] text-slate-700 font-normal">
-                  {item.description}
+                <p className="text-[10px] text-slate-600 font-normal">
+                  Valid GSTIN found • Page {item.pageNumber || 12}
                 </p>
-
-                <div className="pt-1 flex items-center justify-between text-[10px] text-slate-400 font-mono">
-                  <span>{item.category}</span>
-                  <span>{item.time}</span>
-                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
+      </div>
+
+      {/* Footer Info Box */}
+      <div className="p-2.5 bg-blue-50/50 border-t border-blue-100 flex items-start space-x-2 text-[10px] text-blue-900 shrink-0">
+        <Info className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+        <p className="leading-tight font-normal">
+          <strong>The final decision is for the procurement officer.</strong><br />
+          This system provides verification support with evidence and recommendations.
+        </p>
       </div>
     </div>
   );

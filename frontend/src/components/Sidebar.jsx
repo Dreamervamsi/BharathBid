@@ -1,77 +1,71 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
-  LayoutDashboard, 
   SearchCheck, 
   Landmark, 
-  TableProperties, 
-  AlertOctagon, 
+  FileText, 
   Mail, 
+  AlertOctagon, 
   Settings, 
-  Upload,
-  FileCheck2,
-  ShieldCheck
+  HelpCircle,
+  BookOpen
 } from 'lucide-react';
 import emblemSvg from '../assets/emblem.svg';
+import { useToast } from '../context/ToastContext';
 
 export default function Sidebar({ onOpenUpload }) {
+  const { showToast } = useToast();
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'GeM Availability Checker', path: '/verification', icon: SearchCheck },
-    { name: 'Financial Approvals', path: '/queue', icon: Landmark },
-    { name: 'L1 Comparative Matrix', path: '/templates', icon: TableProperties },
-    { name: 'Risk & Red Flag Logs', path: '/audit', icon: AlertOctagon, badge: 'CRITICAL' },
-    { name: 'SMTP Mailer', path: '/reports', icon: Mail },
+    { name: 'Live Verification Workspace', path: '/verification', icon: SearchCheck },
+    { name: 'Tenders & Bids Queue', path: '/queue', icon: Landmark, count: 7 },
+    { name: 'Cases', path: '/cases', icon: FileText },
+    { name: 'Reports', path: '/reports', icon: Mail },
+    { name: 'Audit Trail', path: '/audit', icon: AlertOctagon },
+    { name: 'Integrations', path: '/integrations', icon: Settings },
     { name: 'Settings', path: '/settings', icon: Settings },
+    { name: 'Help & Support', path: '/help', icon: HelpCircle },
   ];
 
   return (
-    <aside className="w-64 bg-[#0B2545] text-slate-200 flex flex-col shrink-0 min-h-screen border-r border-slate-800 select-none">
+    <aside className="w-60 bg-[#071328] text-slate-300 flex flex-col shrink-0 min-h-screen border-r border-slate-800/80 select-none font-sans">
       {/* Top Ministry Emblem Block */}
-      <div className="p-4 border-b border-slate-800/80 flex items-center space-x-3 bg-[#002147]/50">
-        <div className="w-10 h-11 rounded bg-white flex items-center justify-center border border-slate-400 p-0.5 shrink-0 shadow-sm">
+      <div
+        onClick={() => showToast('Ministry of Finance - Government of India Portal', 'info')}
+        className="p-3.5 border-b border-slate-800/80 flex items-center space-x-3 bg-[#0B1A30] cursor-pointer hover:bg-[#0B1A30]/80 transition-colors"
+      >
+        <div className="w-8 h-9 rounded bg-white flex items-center justify-center p-0.5 shrink-0 shadow-xs">
           <img src={emblemSvg} alt="Emblem" className="w-full h-full object-contain" />
         </div>
         <div>
-          <h2 className="text-xs font-black uppercase tracking-wider text-white">Ministry of Finance</h2>
-          <p className="text-[10px] font-semibold text-amber-400">Government of India</p>
+          <h2 className="text-xs font-semibold tracking-tight text-white leading-tight">Government of India</h2>
+          <p className="text-[10px] font-normal text-slate-400">Ministry of Finance</p>
         </div>
       </div>
 
-      {/* Persistent Upload Document Button in Left Sidebar */}
-      <div className="p-3 border-b border-slate-800/80 bg-[#1D2A44]/40">
-        <button
-          onClick={onOpenUpload}
-          className="w-full py-2.5 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-md font-extrabold text-xs flex items-center justify-center space-x-2 shadow-md transition-all active:scale-95"
-        >
-          <Upload className="w-4 h-4 stroke-[2.5]" />
-          <span>Quick Upload Bid File</span>
-        </button>
-      </div>
-
       {/* Navigation */}
-      <nav className="flex-1 py-3 px-2 space-y-1 overflow-y-auto">
+      <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink
               key={item.name}
               to={item.path}
+              onClick={() => showToast(`Navigated to ${item.name}`, 'info')}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3 py-2.5 rounded-md text-xs font-bold transition-all ${
+                `flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-all ${
                   isActive
-                    ? 'bg-[#1D2A44] text-white border-l-4 border-amber-400 shadow-sm'
-                    : 'text-slate-300 hover:bg-[#1D2A44]/60 hover:text-white'
+                    ? 'bg-[#152B46] text-white font-semibold border-l-3 border-blue-500 shadow-2xs'
+                    : 'text-slate-300 hover:bg-[#10223A] hover:text-white'
                 }`
               }
             >
-              <div className="flex items-center space-x-3">
-                <Icon className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="truncate">{item.name}</span>
+              <div className="flex items-center space-x-2.5">
+                <Icon className="w-4 h-4 text-slate-300 shrink-0 stroke-[1.8]" />
+                <span className="truncate text-[11px]">{item.name}</span>
               </div>
-              {item.badge && (
-                <span className="bg-rose-500/20 text-rose-400 border border-rose-500/40 px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider">
-                  {item.badge}
+              {item.count && (
+                <span className="bg-blue-600 text-white font-medium text-[10px] px-1.5 py-0.2 rounded-full">
+                  {item.count}
                 </span>
               )}
             </NavLink>
@@ -80,16 +74,17 @@ export default function Sidebar({ onOpenUpload }) {
       </nav>
 
       {/* Bottom System Status */}
-      <div className="p-3 border-t border-slate-800 bg-[#002147]/60">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">GeM Integration Engine</div>
-        <div className="flex items-center space-x-2 text-xs text-emerald-400 font-bold">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span>Online & Synchronized</span>
+      <div
+        onClick={() => showToast('System Status: Operational • All systems running', 'success')}
+        className="p-3 border-t border-slate-800/80 bg-[#0B1A30]/60 cursor-pointer hover:bg-[#0B1A30] transition-colors m-2 rounded-lg border border-slate-800"
+      >
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">System Status</div>
+        <div className="flex items-center space-x-1.5 text-xs text-emerald-400 font-medium">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 inline-block"></span>
+          <span>Operational</span>
         </div>
-        <div className="text-[9px] text-slate-400 mt-1 font-mono">NIC-GeM API v4.2 • Active</div>
+        <div className="text-[9px] text-slate-400 mt-0.5 font-normal">All systems running</div>
+        <div className="text-[9px] text-slate-500 mt-1 font-mono">Last Updated: 14 Mar 2025, 02:45 PM</div>
       </div>
     </aside>
   );

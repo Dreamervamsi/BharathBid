@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAuditTrail } from '../services/api';
 import { ShieldCheck, Download, FileText } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 export default function AuditTrail() {
+  const { showToast } = useToast();
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
@@ -22,10 +24,11 @@ export default function AuditTrail() {
     a.href = url;
     a.download = `Audit_Trail_${Date.now()}.csv`;
     a.click();
+    showToast('Exported forensic audit logs to CSV successfully!', 'success');
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-up">
       <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between">
         <div>
           <h1 className="text-base font-bold text-slate-900 uppercase tracking-wide">Procurement Forensic Audit Log</h1>

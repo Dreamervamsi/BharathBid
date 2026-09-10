@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Upload, FileText, CheckCircle2, AlertCircle, Building2, ShieldCheck, FileCheck, Layers } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 export default function LeftControlPanel({ 
   metadata = {}, 
   onMetadataChange, 
   onFileUpload 
 }) {
+  const { showToast } = useToast();
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
 
@@ -24,6 +26,7 @@ export default function LeftControlPanel({
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       setUploadedFile(file);
+      showToast(`Ingested file: ${file.name}`, 'success');
       if (onFileUpload) onFileUpload(file);
     }
   };
@@ -32,6 +35,7 @@ export default function LeftControlPanel({
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setUploadedFile(file);
+      showToast(`Ingested file: ${file.name}`, 'success');
       if (onFileUpload) onFileUpload(file);
     }
   };
@@ -41,7 +45,7 @@ export default function LeftControlPanel({
       {/* Header */}
       <div className="bg-[#0B2545] text-white p-3 border-b border-slate-800 flex items-center justify-between">
         <span className="font-extrabold uppercase tracking-wider text-[11px]">Control Sidebar & Ingestion</span>
-        <span className="bg-amber-400 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded uppercase">
+        <span className="bg-blue-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">
           NIC-GeM v4.2
         </span>
       </div>

@@ -1,22 +1,27 @@
 import React, { useState } from 'react';
 import { FileText, Eye, Download, CheckCircle, Loader2 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 export default function FinalAction({ caseId = "GEM/2024/B/19102", onGenerateMemo }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [memoUrl, setMemoUrl] = useState(null);
 
   const handleGenerate = async () => {
     setLoading(true);
+    showToast('Compiling official disqualification memo PDF...', 'info');
     const result = await onGenerateMemo(caseId);
     setLoading(false);
     if (result?.url) {
       setMemoUrl(result.url);
+      showToast('Official Disqualification Memo generated successfully!', 'success');
       window.open(result.url, '_blank');
     }
   };
 
   const handlePreview = () => {
     if (memoUrl) {
+      showToast('Opening generated disqualification memo...', 'info');
       window.open(memoUrl, '_blank');
     } else {
       handleGenerate();

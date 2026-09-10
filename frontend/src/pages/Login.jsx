@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { Building2, ShieldCheck, Lock, Mail, Loader2, ArrowRight } from 'lucide-react';
 
 import emblemSvg from '../assets/emblem.svg';
 
 export default function Login() {
+  const { showToast } = useToast();
   const [email, setEmail] = useState('arjun.singh@gov.in');
   const [password, setPassword] = useState('admin123');
   const [loading, setLoading] = useState(false);
@@ -28,20 +30,24 @@ export default function Login() {
       if (res.ok) {
         const data = await res.json();
         login(data.user, data.token);
+        showToast(`Welcome back, ${data.user.fullName || 'Officer'}! Signed in successfully.`, 'success');
         navigate('/');
       } else {
         const errData = await res.json().catch(() => ({}));
         setError(errData.error || 'Invalid credentials. Please try again.');
+        showToast('Sign in failed: Invalid credentials.', 'error');
       }
     } catch (err) {
       // Fallback local auth for SIH demo resilience
+      const mockName = email.split('@')[0].replace('.', ' ').toUpperCase();
       login({
-        fullName: email.split('@')[0].replace('.', ' ').toUpperCase(),
+        fullName: mockName,
         email: email,
         role: "Procurement Officer",
         department: "Ministry of Finance",
         employeeId: "GEM/OFF/1910"
       }, "gem-token-demo");
+      showToast(`Welcome back, ${mockName}! Signed in in offline demo mode.`, 'success');
       navigate('/');
     } finally {
       setLoading(false);
@@ -49,7 +55,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans select-none">
+    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans select-none animate-fade-up">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="inline-flex items-center justify-center p-3 rounded-xl bg-white border border-slate-700 mb-3 shadow-lg">
           <img src={emblemSvg} alt="Government of India Emblem" className="w-16 h-20 object-contain" />

@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import LeftControlPanel from '../components/LeftControlPanel';
 import MiddleWorkflowPanel from '../components/MiddleWorkflowPanel';
 import RightAuditPanel from '../components/RightAuditPanel';
+import { useToast } from '../context/ToastContext';
 
 export default function Dashboard({ onOpenUpload }) {
+  const { showToast } = useToast();
   // State for Metadata
   const [metadata, setMetadata] = useState({
     tenderId: 'GEM/2024/B/19102',
@@ -21,30 +23,35 @@ export default function Dashboard({ onOpenUpload }) {
 
   const handleMetadataChange = (key, value) => {
     setMetadata(prev => ({ ...prev, [key]: value }));
+    showToast(`Updated metadata field "${key}" to ${value}`, 'info');
   };
 
   const handleMainDrop = (e) => {
     e.preventDefault();
     setIsMainDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setActiveFile(e.dataTransfer.files[0]);
+      const file = e.dataTransfer.files[0];
+      setActiveFile(file);
+      showToast(`Selected active audit file: ${file.name}`, 'success');
     }
   };
 
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setActiveFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setActiveFile(file);
+      showToast(`Loaded active audit file: ${file.name}`, 'success');
     }
   };
 
   return (
-    <div className="space-y-4 font-sans">
+    <div className="space-y-4 font-sans animate-fade-up">
       {/* 3. DUAL-LOCATION UPLOAD & ONBOARDING MAIN WORKSPACE BLOCK (When no active file is uploaded) */}
       {!activeFile ? (
         <div className="bg-white rounded-xl border-2 border-slate-300 shadow-sm p-6 text-center space-y-4 relative overflow-hidden">
           <div className="max-w-2xl mx-auto space-y-2">
-            <div className="inline-flex items-center space-x-2 bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wide">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            <div className="inline-flex items-center space-x-2 bg-blue-50 text-blue-900 border border-blue-200 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wide">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
               <span>GeM Procurement Ingestion Portal Active</span>
             </div>
             <h1 className="text-xl font-black text-[#0B2545] uppercase tracking-tight">
@@ -73,7 +80,7 @@ export default function Dashboard({ onOpenUpload }) {
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
             />
             <div className="flex flex-col items-center justify-center space-y-3">
-              <div className="p-4 bg-[#0B2545] text-amber-400 rounded-full shadow-lg">
+              <div className="p-4 bg-[#0B2545] text-blue-400 rounded-full shadow-lg">
                 <Upload className="w-8 h-8 stroke-[2.5]" />
               </div>
               <div>
@@ -84,7 +91,7 @@ export default function Dashboard({ onOpenUpload }) {
                   Supports PDF, ZIP, JSON, Tax Invoices (Max 50MB)
                 </p>
               </div>
-              <button className="py-2 px-5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow-sm transition-all pointer-events-none">
+              <button className="py-2 px-5 bg-[#0B2545] hover:bg-slate-800 text-white font-extrabold text-xs rounded-lg shadow-sm transition-all pointer-events-none">
                 Browse System Files
               </button>
             </div>
@@ -100,12 +107,12 @@ export default function Dashboard({ onOpenUpload }) {
         /* Active File Header Notification Banner */
         <div className="bg-[#0B2545] text-white p-3 px-4 rounded-lg shadow-sm flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-amber-400 text-slate-950 rounded font-black">
+            <div className="p-2 bg-blue-600 text-white rounded font-black">
               <FileText className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-xs text-amber-300">ACTIVE AUDIT FILE:</span>
+                <span className="font-extrabold text-xs text-blue-300">ACTIVE AUDIT FILE:</span>
                 <span className="font-mono text-xs font-bold text-white">{activeFile.name}</span>
               </div>
               <p className="text-[10px] text-slate-300 font-medium">

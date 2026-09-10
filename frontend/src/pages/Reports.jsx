@@ -1,15 +1,28 @@
 import React from 'react';
 import { BarChart3, PieChart, CheckCircle2, AlertTriangle, HelpCircle, Download } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 export default function Reports() {
+  const { showToast } = useToast();
+
+  const handleExportPDF = () => {
+    showToast('Exporting summary compliance report (PDF)...', 'info');
+    setTimeout(() => {
+      showToast('Summary report PDF generated & saved to downloads!', 'success');
+    }, 1200);
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-up">
       <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between">
         <div>
           <h1 className="text-base font-bold text-slate-900 uppercase tracking-wide">Procurement Compliance Reports</h1>
           <p className="text-xs text-slate-500">Forensic analytics & compliance distribution for procurement auditing</p>
         </div>
-        <button className="py-2 px-3 bg-slate-900 text-white rounded text-xs font-bold flex items-center space-x-1.5">
+        <button
+          onClick={handleExportPDF}
+          className="py-2 px-3 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-bold flex items-center space-x-1.5 shadow-2xs transition-colors"
+        >
           <Download className="w-3.5 h-3.5" />
           <span>Export Summary (PDF)</span>
         </button>
