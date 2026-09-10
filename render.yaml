@@ -1,0 +1,58 @@
+services:
+  # Render PostgreSQL Database Service
+  - type: postgres
+    name: gem-postgres
+    region: singapore
+    plan: free
+    ipAllowList: []
+    databaseName: gem_forensic
+    user: postgres
+
+  # FastAPI AI Microservice (Render Web Service)
+  - type: web
+    name: gem-ai-service
+    env: python
+    region: singapore
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: ALLOWED_ORIGINS
+        value: https://*.vercel.app,http://localhost:3000
+
+  # Spring Boot Backend (Render Web Service)
+  - type: web
+    name: gem-backend
+    env: docker
+    region: singapore
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./backend
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: DB_URL
+        fromDatabase:
+          name: gem-postgres
+          property: connectionString
+      - key: DB_USERNAME
+        fromDatabase:
+          name: gem-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: gem-postgres
+          property: password
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: gem-ai-service
+          property: url
+      - key: UPLOAD_DIR
+        value: /tmp/uploads
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: https://*.vercel.app,http://localhost:3000
