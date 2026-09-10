@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
-  LayoutDashboard,
   SearchCheck, 
   Landmark, 
   FileText, 
@@ -18,7 +17,6 @@ import { useToast } from '../context/ToastContext';
 export default function Sidebar({ onOpenUpload }) {
   const { showToast } = useToast();
   const navItems = [
-    { name: 'Executive Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Live Verification Workspace', path: '/verification', icon: SearchCheck },
     { name: 'Tenders & Bids Queue', path: '/queue', icon: Landmark, count: 7 },
     { name: 'Cases', path: '/cases', icon: FileText },

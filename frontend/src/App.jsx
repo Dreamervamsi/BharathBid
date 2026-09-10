@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import Dashboard from './pages/Dashboard';
 import Verification from './pages/Verification';
 import VerificationQueue from './pages/VerificationQueue';
 import Cases from './pages/Cases';
@@ -34,7 +33,7 @@ function MainLayout() {
         <main className="flex-1 overflow-y-auto p-4 sm:p-5 animate-fade-up">
           <Routes>
             <Route path="/" element={<Navigate to="/verification" replace />} />
-            <Route path="/dashboard" element={<Dashboard onOpenUpload={() => setIsQuickUploadOpen(true)} />} />
+            <Route path="/dashboard" element={<Navigate to="/verification" replace />} />
             <Route path="/verification" element={<Verification />} />
             <Route path="/queue" element={<VerificationQueue />} />
             <Route path="/cases" element={<Cases />} />
