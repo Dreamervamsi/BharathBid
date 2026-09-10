@@ -51,6 +51,7 @@
 ---
 
 ## Important File Storage Notice
+
 Uploaded bidder documents are currently stored in local file storage under `UPLOAD_DIR` (e.g. `/tmp/uploads` on Render).
 - **Transient Storage Warning**: Container instances on Render use ephemeral disk storage.
 - **Production Recommendation**: For permanent document storage across container restarts, connect an AWS S3 bucket, Google Cloud Storage, or attach a Render Persistent Disk volume mounted to `/uploads`.
